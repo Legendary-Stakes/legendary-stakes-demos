@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legendary Stakes - Individual Horse Profile</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #fff; }
+    button { cursor: pointer; }
+    input, select { outline: none; }
+    @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // Icons
+    const TrendUp = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>);
+    const Star = ({ filled, size = 16 }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? "#C9A227" : "none"} stroke={filled ? "#C9A227" : "#d1d5db"} strokeWidth="2"><polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" /></svg>);
+    const CheckCircle = ({ size = 12 }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#22c55e" /><path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2" fill="none" /></svg>);
+    const ExternalLink = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
+    const ChevronLeft = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>);
+    const Users = () => (<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>);
+    const ChevronUp = () => (<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="18 15 12 9 6 15" /></svg>);
+    const ChevronDown = () => (<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>);
+
+    // LS Eligible Badge
+    const LSEligibleBadge = () => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #C9A227 0%, #F4D03F 50%, #C9A227 100%)', backgroundSize: '200% auto', animation: 'shimmer 3s linear infinite', padding: '4px 10px', borderRadius: '6px', border: '1px solid #F4D03F' }}>
+        <span style={{ color: '#000', fontSize: '10px', fontWeight: '800' }}>LS ELIGIBLE</span>
+      </div>
+    );
+
+    // Age Level Badge
+    const AgeLevelBadge = ({ age }) => {
+      let level, color, bg;
+      if (age <= 3) { level = 'FUTURITY'; color = '#7c3aed'; bg = '#ede9fe'; }
+      else if (age <= 5) { level = 'DERBY'; color = '#2563eb'; bg = '#dbeafe'; }
+      else if (age <= 7) { level = 'CLASSIC'; color = '#059669'; bg = '#d1fae5'; }
+      else { level = 'OPEN'; color = '#d97706'; bg = '#fef3c7'; }
+      return <span style={{ background: bg, color, padding: '3px 8px', borderRadius: '10px', fontSize: '9px', fontWeight: '700' }}>{level}</span>;
+    };
+
+    // Subtle Claimed Badge
+    const ClaimedBadge = ({ isActive }) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '3px' }}>
+        {isActive ? <CheckCircle size={9} /> : <span style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#4b5563', display: 'inline-block' }}></span>}
+        <span style={{ color: isActive ? '#22c55e' : '#6b7280', fontSize: '8px', fontWeight: '600' }}>{isActive ? 'CLAIMED' : 'UNCLAIMED'}</span>
+      </div>
+    );
+
+    const StarRating = ({ rating, size = 11 }) => (
+      <div style={{ display: 'flex', gap: '1px' }}>
+        {[1,2,3,4,5].map(i => <Star key={i} filled={i <= rating} size={size} />)}
+      </div>
+    );
+
+    // Top X% Breakdown Badges
+    const TopPercentBadges = ({ offspring, discipline, disciplineName, allLegendary }) => (
+      <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {offspring && <span style={{ background: '#dcfce7', color: '#166534', padding: '2px 6px', borderRadius: '8px', fontSize: '8px', fontWeight: '700' }}>Top {offspring}%: OFFSPRING</span>}
+        <span style={{ background: '#dbeafe', color: '#1e40af', padding: '2px 6px', borderRadius: '8px', fontSize: '8px', fontWeight: '700' }}>Top {discipline}%: {disciplineName}</span>
+        <span style={{ background: '#fef3c7', color: '#92400e', padding: '2px 6px', borderRadius: '8px', fontSize: '8px', fontWeight: '700' }}>Top {allLegendary}%: ALL LEGENDARY</span>
+      </div>
+    );
+
+    function IndividualProfile() {
+      const [activeTab, setActiveTab] = useState('earnings');
+      const [rpiView, setRpiView] = useState('season');
+      const [ratingsView, setRatingsView] = useState('season');
+      const [earningsSort, setEarningsSort] = useState({ field: 'total', dir: 'desc' });
+
+      const horseData = {
+        name: 'HERSHEY HISS',
+        regNumber: '5482901',
+        registry: 'AQHA',
+        age: 10,
+        color: 'Sorrel',
+        gender: 'Mare',
+        sire: { name: 'Third Cutting', claimed: true, rating: 5 },
+        dam: { name: 'Hissy Cat', claimed: true, rating: 4 },
+        owner: { name: 'Jeffrey W Foland', city: 'Weatherford', state: 'Texas', claimed: true, rating: 5 },
+        breeder: { name: 'Wagonhound Land & Livestock', claimed: true, rating: 4 },
+        followers: { count: 1247, growth: '+12.4%' },
+        status: 'Alive',
+        competingStatus: 'Active',
+      };
+
+      // INDIVIDUAL EARNINGS - NO LS Royalties (that's only for Sire/Dam profiles)
+      const earnings = {
+        preLSEarnings: 42500,
+        lsEntryEarnings: 24950,
+        totalEarnings: 67450,
+        seasonEarnings: 12400,
+      };
+
+      // Events data for earnings tab
+      const [eventsData] = useState([
+        { event: 'NCHA Super Stakes', date: '2025-01-15', place: 2, type: 'LS', purse: 4500, lsClaims: 2800, total: 7300 },
+        { event: 'TCHA Weekend Show', date: '2025-01-08', place: 1, type: 'LS', purse: 2200, lsClaims: 1800, total: 4000 },
+        { event: 'Abilene Spectacular', date: '2024-12-20', place: 3, type: 'Pre-LS', purse: 3800, lsClaims: 0, total: 3800 },
+        { event: 'PCCHA Fall Futurity', date: '2024-11-15', place: 1, type: 'LS', purse: 5200, lsClaims: 3200, total: 8400 },
+        { event: 'West Texas Classic', date: '2024-10-28', place: 4, type: 'Pre-LS', purse: 1800, lsClaims: 0, total: 1800 },
+      ]);
+
+      // 10X Ratings by DISCIPLINE + OVERALL
+      const tenXRatings = {
+        season: {
+          overall: { ability: 8.5, performance: 8.2, skill: 8.4, difficulty: 7.9, durability: 8.1, try: 8.7, courage: 8.3, versatility: 7.6, pedigree: 9.2, alpha: 8.4, total: 8.5 },
+          cutting: { ability: 8.8, performance: 8.5, skill: 8.7, difficulty: 8.2, durability: 8.0, try: 8.9, courage: 8.5, versatility: 7.2, pedigree: 9.2, alpha: 8.6, total: 8.6 },
+          reinedCowHorse: { ability: 8.2, performance: 7.9, skill: 8.1, difficulty: 7.6, durability: 8.2, try: 8.5, courage: 8.1, versatility: 8.0, pedigree: 9.2, alpha: 8.2, total: 8.2 },
+          ranchHorse: { ability: 7.8, performance: 7.5, skill: 7.6, difficulty: 7.2, durability: 8.3, try: 8.2, courage: 7.8, versatility: 8.4, pedigree: 9.2, alpha: 7.9, total: 8.0 },
+        },
+        career: {
+          overall: { ability: 8.3, performance: 8.0, skill: 8.2, difficulty: 7.7, durability: 8.3, try: 8.5, courage: 8.1, versatility: 7.8, pedigree: 9.2, alpha: 8.2, total: 8.3 },
+          cutting: { ability: 8.6, performance: 8.3, skill: 8.5, difficulty: 8.0, durability: 8.2, try: 8.7, courage: 8.3, versatility: 7.4, pedigree: 9.2, alpha: 8.4, total: 8.4 },
+          reinedCowHorse: { ability: 8.0, performance: 7.7, skill: 7.9, difficulty: 7.4, durability: 8.4, try: 8.3, courage: 7.9, versatility: 8.2, pedigree: 9.2, alpha: 8.0, total: 8.0 },
+          ranchHorse: { ability: 7.6, performance: 7.3, skill: 7.4, difficulty: 7.0, durability: 8.5, try: 8.0, courage: 7.6, versatility: 8.6, pedigree: 9.2, alpha: 7.7, total: 7.8 },
+        }
+      };
+
+      const rpiData = {
+        season: { score: 87.4, trend: '+3.1', layers: { gapToLeader: { score: 30.5, max: 35, pct: 87 }, ageEfficiency: { score: 25.8, max: 30, pct: 86 }, riderCompetency: { score: 17.2, max: 20, pct: 86 }, fieldStrength: { score: 8.2, max: 10, pct: 82 }, rollingAverage: { score: 4.3, max: 5, pct: 86 } } },
+        career: { score: 84.9, trend: '+8.7', layers: { gapToLeader: { score: 29.4, max: 35, pct: 84 }, ageEfficiency: { score: 25.2, max: 30, pct: 84 }, riderCompetency: { score: 16.8, max: 20, pct: 84 }, fieldStrength: { score: 7.9, max: 10, pct: 79 }, rollingAverage: { score: 4.2, max: 5, pct: 84 } } }
+      };
+
+      const currentRpi = rpiView === 'season' ? rpiData.season : rpiData.career;
+      const currentRatings = ratingsView === 'season' ? tenXRatings.season : tenXRatings.career;
+
+      const sortedEvents = useMemo(() => {
+        return [...eventsData].sort((a, b) => {
+          const aVal = a[earningsSort.field];
+          const bVal = b[earningsSort.field];
+          if (typeof aVal === 'string') return earningsSort.dir === 'desc' ? bVal.localeCompare(aVal) : aVal.localeCompare(bVal);
+          return earningsSort.dir === 'desc' ? bVal - aVal : aVal - bVal;
+        });
+      }, [eventsData, earningsSort]);
+
+      const handleEarningsSort = (field) => {
+        if (earningsSort.field === field) {
+          setEarningsSort({ field, dir: earningsSort.dir === 'desc' ? 'asc' : 'desc' });
+        } else {
+          setEarningsSort({ field, dir: 'desc' });
+        }
+      };
+
+      const SortHeader = ({ field, label, align = 'center' }) => (
+        <th style={{ textAlign: align, padding: '12px 16px', fontWeight: '600', fontSize: '11px', color: '#666' }}>
+          <button onClick={() => handleEarningsSort(field)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '2px', color: earningsSort.field === field ? '#C9A227' : '#666', fontWeight: '600', fontSize: '11px', justifyContent: align === 'right' ? 'flex-end' : align === 'left' ? 'flex-start' : 'center' }}>
+            {label}
+            <span style={{ display: 'flex', flexDirection: 'column', marginLeft: '2px' }}>
+              <ChevronUp />
+              <ChevronDown style={{ marginTop: '-6px' }} />
+            </span>
+          </button>
+        </th>
+      );
+
+      const tabs = [
+        { id: 'earnings', label: 'EARNINGS' },
+        { id: 'ratings', label: '10X RATINGS' },
+        { id: 'rpi', label: 'RPI' },
+        { id: 'registration', label: 'REGISTRATION' },
+        { id: 'eligibility', label: 'ELIGIBILITY' },
+        { id: 'genetics', label: 'GENETICS' },
+        { id: 'stats', label: 'STATS' },
+        { id: 'pedigree', label: 'PEDIGREE' },
+        { id: 'rankings', label: 'RANKINGS' },
+      ];
+
+      return (
+        <div style={{ minHeight: '100vh', background: '#ffffff', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+          
+          {/* NAVIGATION SIDEBAR */}
+          <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0, width: '60px', background: '#0f0f0f', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0', zIndex: 200 }}>
+            <button style={{ background: '#222', border: 'none', borderRadius: '8px', padding: '12px', marginBottom: '16px', color: '#C9A227' }}><ChevronLeft /></button>
+            <div style={{ width: '40px', height: '40px', background: '#C9A227', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '12px', color: '#000' }}>LS</div>
+            <div style={{ flex: 1 }} />
+            <div style={{ color: '#666', fontSize: '8px', writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}>LEGENDARY STAKES™</div>
+          </div>
+
+          {/* MAIN CONTENT */}
+          <div style={{ marginLeft: '60px' }}>
+            
+            {/* HEADER */}
+            <div style={{ background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0f0f0f 100%)', color: 'white', padding: '20px 24px', borderBottom: '4px solid #C9A227' }}>
+              <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                
+                {/* Top Bar */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ background: '#222', padding: '4px 10px', borderRadius: '6px', fontSize: '10px', fontWeight: '700', color: '#fff', border: '1px solid #333' }}>INDIVIDUAL</span>
+                    <LSEligibleBadge />
+                    <AgeLevelBadge age={horseData.age} />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#222', padding: '8px 14px', borderRadius: '8px' }}>
+                    <Users />
+                    <div>
+                      <div style={{ fontSize: '16px', fontWeight: '800' }}>{horseData.followers.count.toLocaleString()}</div>
+                      <div style={{ fontSize: '10px', color: '#22c55e' }}>{horseData.followers.growth}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* PHOTO ROW + EARNINGS */}
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', marginBottom: '16px' }}>
+                  {/* Photo */}
+                  <div style={{ width: '140px', height: '140px', background: '#333', borderRadius: '12px', border: '3px solid #C9A227', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span style={{ color: '#666', fontSize: '11px' }}>PHOTO</span>
+                  </div>
+
+                  {/* Info + Earnings */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                      <div>
+                        <h1 style={{ fontSize: '26px', fontWeight: '900', margin: 0 }}>{horseData.name}</h1>
+                        <p style={{ color: '#C9A227', fontSize: '12px', fontWeight: '600', margin: '2px 0 0 0' }}>
+                          {horseData.age}yo {horseData.color} {horseData.gender} • {horseData.registry} #{horseData.regNumber}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button style={{ background: '#C9A227', color: '#000', border: 'none', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px' }}>★ FOLLOW</button>
+                        <button style={{ background: '#333', color: '#fff', border: '1px solid #444', padding: '8px 14px', borderRadius: '6px', fontWeight: 'bold', fontSize: '11px' }}>↗ SHARE</button>
+                      </div>
+                    </div>
+
+                    {/* INDIVIDUAL EARNINGS - Side by Side (NO ROYALTIES) */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                      {/* Pre-LS */}
+                      <div style={{ background: '#1a1a1a', border: '1px solid #333', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '9px', color: '#888', fontWeight: '600', marginBottom: '4px' }}>PRE-LS EARNINGS</div>
+                        <div style={{ fontSize: '18px', fontWeight: '900', color: '#666' }}>${earnings.preLSEarnings.toLocaleString()}</div>
+                        <div style={{ fontSize: '8px', color: '#555' }}>Outside/Before LS</div>
+                      </div>
+                      {/* LS Entry Earnings */}
+                      <div style={{ background: '#1a1a1a', border: '1px solid #C9A227', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '9px', color: '#C9A227', fontWeight: '600', marginBottom: '4px' }}>LS EARNINGS</div>
+                        <div style={{ fontSize: '18px', fontWeight: '900', color: '#C9A227' }}>${earnings.lsEntryEarnings.toLocaleString()}</div>
+                        <div style={{ fontSize: '8px', color: '#666' }}>LS Entries</div>
+                      </div>
+                      {/* Season */}
+                      <div style={{ background: '#1a1a1a', border: '1px solid #333', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '9px', color: '#888', fontWeight: '600', marginBottom: '4px' }}>SEASON 2025</div>
+                        <div style={{ fontSize: '18px', fontWeight: '900', color: '#fff' }}>${earnings.seasonEarnings.toLocaleString()}</div>
+                        <div style={{ fontSize: '8px', color: '#666' }}>This Season</div>
+                      </div>
+                      {/* TOTAL */}
+                      <div style={{ background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)', padding: '12px', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.8)', fontWeight: '600', marginBottom: '4px' }}>TOTAL EARNINGS</div>
+                        <div style={{ fontSize: '20px', fontWeight: '900', color: '#fff' }}>${earnings.totalEarnings.toLocaleString()}</div>
+                        <div style={{ fontSize: '8px', color: 'rgba(255,255,255,0.7)' }}>Career</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SYMMETRICAL BUTTONS: RPI | 10X | STATUS */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '12px' }}>
+                  <div style={{ background: 'linear-gradient(135deg, #C9A227 0%, #a78420 100%)', padding: '16px', borderRadius: '8px', color: '#000', textAlign: 'center' }}>
+                    <div style={{ fontSize: '10px', fontWeight: '600', opacity: 0.7, marginBottom: '4px' }}>RPI</div>
+                    <div style={{ fontSize: '32px', fontWeight: '900' }}>{currentRpi.score}</div>
+                    <div style={{ fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}><TrendUp /> {currentRpi.trend}</div>
+                  </div>
+                  <div style={{ background: '#222', padding: '16px', borderRadius: '8px', border: '1px solid #333', textAlign: 'center' }}>
+                    <div style={{ fontSize: '10px', color: '#666', fontWeight: '600', marginBottom: '4px' }}>OVERALL RATING (10X)</div>
+                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#C9A227' }}>{currentRatings.overall.total}</div>
+                    <TopPercentBadges discipline={8} disciplineName="CUTTING" allLegendary={15} />
+                  </div>
+                  <div style={{ background: '#222', padding: '16px', borderRadius: '8px', border: '1px solid #333', textAlign: 'center' }}>
+                    <div style={{ fontSize: '10px', color: '#666', fontWeight: '600', marginBottom: '4px' }}>STATUS</div>
+                    <div style={{ fontSize: '20px', fontWeight: '900', color: '#22c55e' }}>{horseData.status}</div>
+                    <div style={{ fontSize: '11px', color: '#C9A227' }}>{horseData.competingStatus}</div>
+                  </div>
+                </div>
+
+                {/* Quick Info Cards with Star Ratings + CLAIMED underneath */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                  {[
+                    { label: 'SIRE', value: horseData.sire.name, claimed: horseData.sire.claimed, rating: horseData.sire.rating, link: true },
+                    { label: 'DAM', value: horseData.dam.name, claimed: horseData.dam.claimed, rating: horseData.dam.rating, link: true },
+                    { label: 'OWNER', value: horseData.owner.name, claimed: horseData.owner.claimed, rating: horseData.owner.rating },
+                    { label: 'BREEDER', value: horseData.breeder.name, claimed: horseData.breeder.claimed, rating: horseData.breeder.rating },
+                  ].map(item => (
+                    <div key={item.label} style={{ background: '#222', padding: '10px', borderRadius: '8px' }}>
+                      <div style={{ color: '#666', fontSize: '9px', fontWeight: '600', marginBottom: '4px' }}>{item.label}</div>
+                      <div style={{ color: '#C9A227', fontSize: '12px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {item.value} {item.link && <ExternalLink />}
+                      </div>
+                      <div style={{ marginTop: '4px' }}>
+                        <StarRating rating={item.rating} size={10} />
+                        <ClaimedBadge isActive={item.claimed} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* TAB NAV */}
+            <div style={{ background: '#f8f8f8', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 100 }}>
+              <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', overflowX: 'auto' }}>
+                {tabs.map(tab => (
+                  <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                    padding: '14px 18px', background: activeTab === tab.id ? '#fff' : 'transparent', border: 'none',
+                    borderBottom: activeTab === tab.id ? '3px solid #C9A227' : '3px solid transparent',
+                    fontWeight: activeTab === tab.id ? '700' : '500', fontSize: '11px',
+                    color: activeTab === tab.id ? '#000' : '#666', cursor: 'pointer', whiteSpace: 'nowrap'
+                  }}>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* CONTENT */}
+            <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '24px' }}>
+              
+              {/* EARNINGS TAB - SORTABLE */}
+              {activeTab === 'earnings' && (
+                <div>
+                  {/* Summary Cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+                    {[
+                      { label: 'PRE-LS EARNINGS', value: `$${earnings.preLSEarnings.toLocaleString()}`, sub: 'Before/Outside LS', color: '#666' },
+                      { label: 'LS EARNINGS', value: `$${earnings.lsEntryEarnings.toLocaleString()}`, sub: 'LS Entries', color: '#C9A227' },
+                      { label: 'SEASON 2025', value: `$${earnings.seasonEarnings.toLocaleString()}`, sub: 'Current Season', color: '#3b82f6' },
+                      { label: 'CAREER TOTAL', value: `$${earnings.totalEarnings.toLocaleString()}`, sub: 'All Time', color: '#22c55e' },
+                    ].map(stat => (
+                      <div key={stat.label} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '10px', color: '#666', fontWeight: '600', marginBottom: '8px' }}>{stat.label}</div>
+                        <div style={{ fontSize: '24px', fontWeight: '900', color: stat.color }}>{stat.value}</div>
+                        <div style={{ fontSize: '10px', color: '#999', marginTop: '4px' }}>{stat.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Events Table - SORTABLE */}
+                  <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+                    <div style={{ background: '#0f0f0f', color: 'white', padding: '16px 20px', fontWeight: 'bold' }}>EARNINGS BY EVENT</div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ background: '#f8f8f8' }}>
+                          <SortHeader field="event" label="EVENT" align="left" />
+                          <SortHeader field="date" label="DATE" />
+                          <SortHeader field="place" label="PLACE" />
+                          <th style={{ textAlign: 'center', padding: '12px 16px', fontWeight: '600', fontSize: '11px', color: '#666' }}>TYPE</th>
+                          <SortHeader field="purse" label="PURSE" align="right" />
+                          <SortHeader field="lsClaims" label="LS CLAIMS" align="right" />
+                          <SortHeader field="total" label="TOTAL" align="right" />
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sortedEvents.map((e, i) => (
+                          <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                            <td style={{ padding: '14px 16px', fontWeight: '600' }}>{e.event}</td>
+                            <td style={{ padding: '14px 16px', textAlign: 'center', color: '#666' }}>{e.date}</td>
+                            <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                              <span style={{ background: e.place === 1 ? '#C9A227' : e.place <= 3 ? '#e5e7eb' : '#f3f4f6', color: e.place === 1 ? '#000' : '#666', padding: '2px 8px', borderRadius: '10px', fontSize: '11px', fontWeight: '700' }}>{e.place}</span>
+                            </td>
+                            <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                              <span style={{ background: e.type === 'LS' ? '#C9A227' : '#e5e7eb', color: e.type === 'LS' ? '#000' : '#666', padding: '2px 8px', borderRadius: '10px', fontSize: '9px', fontWeight: '700' }}>{e.type}</span>
+                            </td>
+                            <td style={{ padding: '14px 16px', textAlign: 'right', color: '#666' }}>${e.purse.toLocaleString()}</td>
+                            <td style={{ padding: '14px 16px', textAlign: 'right', color: e.lsClaims ? '#C9A227' : '#999', fontWeight: e.lsClaims ? '700' : '400' }}>{e.lsClaims ? `$${e.lsClaims.toLocaleString()}` : '—'}</td>
+                            <td style={{ padding: '14px 16px', textAlign: 'right', fontWeight: '800', color: '#22c55e' }}>${e.total.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* 10X RATINGS TAB - BY DISCIPLINE */}
+              {activeTab === 'ratings' && (
+                <div>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                    <button onClick={() => setRatingsView('season')} style={{ padding: '8px 20px', borderRadius: '20px', border: 'none', background: ratingsView === 'season' ? '#C9A227' : '#f3f4f6', color: ratingsView === 'season' ? '#000' : '#666', fontWeight: '600', fontSize: '12px' }}>SEASON 2025</button>
+                    <button onClick={() => setRatingsView('career')} style={{ padding: '8px 20px', borderRadius: '20px', border: 'none', background: ratingsView === 'career' ? '#C9A227' : '#f3f4f6', color: ratingsView === 'career' ? '#000' : '#666', fontWeight: '600', fontSize: '12px' }}>CAREER</button>
+                  </div>
+
+                  {/* OVERALL */}
+                  <div style={{ background: 'linear-gradient(135deg, #C9A227 0%, #a78420 100%)', borderRadius: '12px', padding: '20px', color: '#000', marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ fontSize: '12px', fontWeight: '600', opacity: 0.7 }}>OVERALL RATING (10X)</div>
+                        <div style={{ fontSize: '56px', fontWeight: '900' }}>{currentRatings.overall.total}</div>
+                        <TopPercentBadges discipline={8} disciplineName="CUTTING" allLegendary={15} />
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                        {['ability', 'performance', 'skill', 'difficulty', 'durability', 'try', 'courage', 'versatility', 'pedigree', 'alpha'].map(key => (
+                          <div key={key} style={{ background: 'rgba(0,0,0,0.1)', padding: '6px 10px', borderRadius: '6px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '16px', fontWeight: '800' }}>{currentRatings.overall[key]}</div>
+                            <div style={{ fontSize: '7px', textTransform: 'uppercase' }}>{key}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* BY DISCIPLINE */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                    {[
+                      { key: 'cutting', label: 'CUTTING', topPct: { discipline: 5, all: 12 } },
+                      { key: 'reinedCowHorse', label: 'REINED COW HORSE', topPct: { discipline: 15, all: 22 } },
+                      { key: 'ranchHorse', label: 'RANCH HORSE', topPct: { discipline: 25, all: 35 } },
+                    ].map(disc => (
+                      <div key={disc.key} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+                        <div style={{ background: '#0f0f0f', color: 'white', padding: '12px 16px', fontWeight: 'bold', fontSize: '12px' }}>{disc.label}</div>
+                        <div style={{ padding: '16px' }}>
+                          <div style={{ textAlign: 'center', marginBottom: '12px' }}>
+                            <div style={{ fontSize: '36px', fontWeight: '900', color: '#C9A227' }}>{currentRatings[disc.key].total}</div>
+                            <TopPercentBadges discipline={disc.topPct.discipline} disciplineName={disc.label} allLegendary={disc.topPct.all} />
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px' }}>
+                            {['ability', 'performance', 'skill', 'difficulty', 'durability', 'try', 'courage', 'versatility', 'pedigree', 'alpha'].map(key => (
+                              <div key={key} style={{ background: '#f9fafb', padding: '6px', borderRadius: '4px', textAlign: 'center' }}>
+                                <div style={{ fontSize: '12px', fontWeight: '700' }}>{currentRatings[disc.key][key]}</div>
+                                <div style={{ fontSize: '6px', color: '#666', textTransform: 'uppercase' }}>{key.slice(0, 3)}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* RPI TAB */}
+              {activeTab === 'rpi' && (
+                <div>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                    <button onClick={() => setRpiView('season')} style={{ padding: '8px 20px', borderRadius: '20px', border: 'none', background: rpiView === 'season' ? '#C9A227' : '#f3f4f6', color: rpiView === 'season' ? '#000' : '#666', fontWeight: '600', fontSize: '12px' }}>SEASON 2025</button>
+                    <button onClick={() => setRpiView('career')} style={{ padding: '8px 20px', borderRadius: '20px', border: 'none', background: rpiView === 'career' ? '#C9A227' : '#f3f4f6', color: rpiView === 'career' ? '#000' : '#666', fontWeight: '600', fontSize: '12px' }}>CAREER</button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                    <div style={{ background: 'linear-gradient(135deg, #C9A227 0%, #a78420 100%)', borderRadius: '12px', padding: '32px', color: '#000' }}>
+                      <div style={{ fontSize: '14px', fontWeight: '600', opacity: 0.7 }}>RPI SCORE</div>
+                      <div style={{ fontSize: '72px', fontWeight: '900' }}>{currentRpi.score}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                        <TrendUp /> {currentRpi.trend}
+                      </div>
+                    </div>
+
+                    <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+                      <div style={{ background: '#0f0f0f', color: 'white', padding: '16px 20px', fontWeight: 'bold' }}>5-LAYER ALGORITHM</div>
+                      <div style={{ padding: '16px' }}>
+                        {Object.entries(currentRpi.layers).map(([key, layer]) => (
+                          <div key={key} style={{ marginBottom: '12px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                              <span style={{ fontSize: '11px', fontWeight: '600' }}>{key.replace(/([A-Z])/g, ' $1').toUpperCase()}</span>
+                              <span style={{ fontSize: '11px', fontWeight: '700' }}>{layer.score}/{layer.max}</span>
+                            </div>
+                            <div style={{ background: '#f3f4f6', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+                              <div style={{ background: '#C9A227', height: '100%', width: `${layer.pct}%`, borderRadius: '4px' }} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* RPI Info */}
+                  <div style={{ marginTop: '24px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '20px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '700', marginBottom: '8px' }}>About RPI</div>
+                    <p style={{ fontSize: '12px', color: '#666', lineHeight: '1.6' }}>
+                      The RPI (Relative Performance Index) measures competitive capability independent of earnings. It achieves 89% correlation with championship results versus 54% for lifetime earnings alone. The 5-layer algorithm excludes all financial data to ensure measurement purity.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* RANKINGS TAB */}
+              {activeTab === 'rankings' && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '24px' }}>
+                    {[
+                      { label: 'OVERALL', rank: 847, total: 50000 },
+                      { label: 'CUTTING', rank: 156, total: 8200 },
+                      { label: 'TEXAS', rank: 23, total: 2450 },
+                    ].map(item => (
+                      <div key={item.label} style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '11px', color: '#666', fontWeight: '600', marginBottom: '8px' }}>{item.label}</div>
+                        <div style={{ fontSize: '48px', fontWeight: '900', color: '#C9A227' }}>#{item.rank}</div>
+                        <div style={{ fontSize: '13px', color: '#666' }}>of {item.total.toLocaleString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button style={{ flex: 1, background: '#C9A227', color: '#000', border: 'none', padding: '16px', borderRadius: '8px', fontWeight: 'bold', fontSize: '13px' }}>DISCIPLINES →</button>
+                    <button style={{ flex: 1, background: '#0f0f0f', color: '#fff', border: 'none', padding: '16px', borderRadius: '8px', fontWeight: 'bold', fontSize: '13px' }}>ALL LEGENDARY →</button>
+                  </div>
+                </div>
+              )}
+
+              {/* Other tabs simplified */}
+              {activeTab === 'registration' && (
+                <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '24px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>REGISTRATION INFORMATION</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                    {[
+                      { label: 'REGISTRY', value: horseData.registry },
+                      { label: 'REG #', value: horseData.regNumber },
+                      { label: 'COLOR', value: horseData.color.toUpperCase() },
+                      { label: 'GENDER', value: horseData.gender.toUpperCase() },
+                      { label: 'AGE', value: `${horseData.age} years` },
+                      { label: 'STATUS', value: horseData.status.toUpperCase() },
+                      { label: 'STATE FOALED', value: 'TEXAS' },
+                      { label: 'DOB', value: '03/15/2014' },
+                    ].map(item => (
+                      <div key={item.label} style={{ padding: '12px', background: '#f9fafb', borderRadius: '8px' }}>
+                        <div style={{ fontSize: '9px', color: '#666', fontWeight: '600', marginBottom: '4px' }}>{item.label}</div>
+                        <div style={{ fontSize: '14px', fontWeight: '700' }}>{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'eligibility' && (
+                <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>LS ELIGIBILITY</div>
+                  <LSEligibleBadge />
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', marginTop: '20px' }}>
+                    {['CUTTING', 'REINED COW HORSE', 'RANCH HORSE', 'REINING', 'SORTING', 'RANCH RODEO'].map(d => (
+                      <span key={d} style={{ background: '#C9A227', color: '#000', padding: '6px 12px', borderRadius: '16px', fontSize: '10px', fontWeight: '700' }}>✓ {d}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'genetics' && (
+                <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>6-PANEL GENETIC TEST</div>
+                  <div style={{ display: 'inline-block', background: '#22c55e', color: '#fff', padding: '8px 20px', borderRadius: '20px', fontWeight: '700' }}>ALL CLEAR (N/N)</div>
+                </div>
+              )}
+
+              {activeTab === 'stats' && (
+                <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '24px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: '700', marginBottom: '16px' }}>PERFORMANCE STATISTICS</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
+                    {[
+                      { label: 'EVENTS', value: '47' },
+                      { label: 'WINS', value: '12' },
+                      { label: 'TOP 5', value: '28' },
+                      { label: 'WIN %', value: '25.5%' },
+                      { label: 'MONEY %', value: '59.6%' },
+                      { label: 'AVG PLACE', value: '4.2' },
+                    ].map(stat => (
+                      <div key={stat.label} style={{ padding: '16px', background: '#f9fafb', borderRadius: '8px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '24px', fontWeight: '900', color: '#C9A227' }}>{stat.value}</div>
+                        <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>{stat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'pedigree' && (
+                <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '40px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '18px', fontWeight: '700', marginBottom: '16px' }}>PEDIGREE</div>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '20px' }}>
+                    <button style={{ padding: '8px 16px', background: '#0f0f0f', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>4 GEN</button>
+                    <button style={{ padding: '8px 16px', background: '#f3f4f6', color: '#666', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>8 GEN</button>
+                  </div>
+                  <p style={{ color: '#666' }}>Interactive pedigree tree with LS Claimed color coding</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<IndividualProfile />, document.getElementById('root'));
+  </script>
+</body>
+</html>

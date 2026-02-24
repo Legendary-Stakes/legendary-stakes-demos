@@ -1,0 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legendary Stakes — Logan Alley Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN SYSTEM — Warm Luxury Ranch Office
+   ═══════════════════════════════════════════ */
+:root {
+  /* Palette — Deep earth tones with gold fire */
+  --black: #08080C;
+  --void: #0D0D12;
+  --obsidian: #111117;
+  --charcoal: #17171F;
+  --slate: #1E1E28;
+  --graphite: #282834;
+  --ash: #3D3D4C;
+  --steel: #5A5A6E;
+  --silver: #8E8E9F;
+  --pearl: #B8B8C8;
+  --ivory: #E8E4DD;
+  --cream: #F5F2EC;
+  --white: #FDFCFA;
+
+  /* Gold spectrum */
+  --gold-warm: #E8C36A;
+  --gold: #C9A227;
+  --gold-deep: #A68520;
+  --gold-dark: #7A6218;
+  --gold-glow: rgba(201,162,39,0.12);
+  --gold-faint: rgba(201,162,39,0.05);
+
+  /* Accents */
+  --leather: #8B6914;
+  --sage: #5A7A5A;
+  --rust: #C45A3C;
+  --sky: #4A8FBF;
+  --dusk: #7A5FAF;
+  --rose: #BF4A6A;
+  --emerald: #2EAA6E;
+
+  /* Functional */
+  --success: #2ECC71;
+  --warning: #F5A623;
+  --danger: #E85A4F;
+  --info: #5BA4CF;
+
+  /* Spacing */
+  --sp-xs: 4px; --sp-sm: 8px; --sp-md: 12px; --sp-lg: 16px;
+  --sp-xl: 20px; --sp-2xl: 28px; --sp-3xl: 40px;
+
+  /* Radius */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px;
+
+  /* Shadows */
+  --sh-card: 0 2px 16px rgba(0,0,0,0.3);
+  --sh-elevated: 0 8px 40px rgba(0,0,0,0.4);
+  --sh-gold: 0 0 30px rgba(201,162,39,0.1);
+  --sh-inner: inset 0 1px 0 rgba(255,255,255,0.03);
+
+  /* Transitions */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 0.15s var(--ease);
+  --t-smooth: 0.3s var(--ease);
+  --t-elegant: 0.5s var(--ease);
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --topbar-h: 60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--black);
+  color: var(--pearl);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Noise texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ash); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ═══════════════════════════════════════════
+   LAYOUT SHELL
+   ═══════════════════════════════════════════ */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--topbar-h) 1fr;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════
+   TOP BAR
+   ═══════════════════════════════════════════ */
+.topbar {
+  grid-column: 1 / -1;
+  background: var(--obsidian);
+  border-bottom: 1px solid rgba(255,255,255,0.035);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: var(--sidebar-w);
+  flex-shrink: 0;
+  padding-right: 20px;
+}
+
+.tb-logo {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--gold-warm), var(--gold-deep));
+  border-radius: 8px;
+  display: grid; place-items: center;
+  font-size: 15px;
+  box-shadow: var(--sh-gold);
+}
+
+.tb-brand-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 0.01em;
+}
+
+.tb-search {
+  flex: 0 1 400px;
+  position: relative;
+}
+.tb-search input {
+  width: 100%;
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--r-sm);
+  padding: 8px 14px 8px 36px;
+  color: var(--ivory);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: var(--t-fast);
+}
+.tb-search input::placeholder { color: var(--steel); }
+.tb-search input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-faint); }
+.tb-search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--steel); font-size: 13px; pointer-events: none;
+}
+
+.tb-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tb-icon-btn {
+  width: 34px; height: 34px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--silver);
+  display: grid; place-items: center;
+  cursor: pointer;
+  font-size: 15px;
+  transition: var(--t-fast);
+  position: relative;
+}
+.tb-icon-btn:hover { background: var(--charcoal); color: var(--gold-warm); border-color: rgba(255,255,255,0.04); }
+.tb-icon-btn .dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--danger); border: 1.5px solid var(--obsidian);
+}
+
+.tb-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 14px 4px 4px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: var(--t-fast);
+  border: 1px solid transparent;
+  margin-left: 4px;
+}
+.tb-profile:hover { background: var(--charcoal); border-color: rgba(255,255,255,0.04); }
+
+.tb-avatar {
+  width: 34px; height: 34px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  display: grid; place-items: center;
+  font-size: 16px;
+  border: 2px solid var(--gold-dark);
+}
+
+.tb-user-name { font-size: 13px; font-weight: 600; color: var(--ivory); }
+.tb-user-roles { font-size: 10px; color: var(--gold); letter-spacing: 0.06em; font-weight: 600; text-transform: uppercase; }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  background: var(--obsidian);
+  border-right: 1px solid rgba(255,255,255,0.035);
+  padding: 16px 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Profile Card */
+.sb-profile-card {
+  margin: 0 12px 16px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold-faint), transparent);
+  border: 1px solid rgba(201,162,39,0.1);
+  border-radius: var(--r-lg);
+  position: relative;
+  overflow: hidden;
+}
+.sb-profile-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle, var(--gold-glow), transparent);
+  pointer-events: none;
+}
+.sb-pc-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 700;
+  color: var(--cream);
+  position: relative;
+}
+.sb-pc-roles {
+  display: flex; gap: 6px; margin-top: 8px;
+  position: relative;
+}
+.sb-role-tag {
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sb-role-tag.owner { background: rgba(201,162,39,0.15); color: var(--gold-warm); }
+.sb-role-tag.breeder { background: rgba(46,170,110,0.12); color: var(--emerald); }
+.sb-role-tag.rider { background: rgba(91,164,207,0.12); color: var(--info); }
+
+.sb-pc-tier {
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--silver);
+  position: relative;
+}
+.sb-pc-tier strong { color: var(--gold-warm); }
+
+/* Nav sections */
+.sb-section { padding: 0 8px; margin-bottom: 4px; }
+
+.sb-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--steel);
+  font-weight: 700;
+  padding: 12px 12px 6px;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: var(--t-fast);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pearl);
+  position: relative;
+  user-select: none;
+}
+.sb-item:hover { background: rgba(255,255,255,0.03); color: var(--ivory); }
+.sb-item.active {
+  background: var(--gold-glow);
+  color: var(--gold-warm);
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 18px;
+  background: var(--gold);
+  border-radius: 0 2px 2px 0;
+}
+.sb-item .sb-icon { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
+.sb-item .sb-badge {
+  margin-left: auto;
+  background: var(--gold);
+  color: var(--black);
+  font-size: 9px; font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.sb-item .sb-dot {
+  margin-left: auto;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.sb-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.035);
+  margin: 8px 12px;
+}
+
+.sb-footer {
+  margin-top: auto;
+  padding: 12px;
+}
+.sb-footer-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: var(--r-sm);
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: var(--silver);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--t-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.sb-footer-btn:hover { color: var(--gold-warm); border-color: rgba(201,162,39,0.2); }
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════ */
+.main {
+  overflow-y: auto;
+  padding: var(--sp-2xl);
+  background: var(--black);
+  position: relative;
+}
+
+/* Ambient glow */
+.main::before {
+  content: '';
+  position: fixed;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,162,39,0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Panel system */
+.panel { display: none; animation: panelIn 0.4s var(--ease) both; }
+.panel.active { display: block; }
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Panel header */
+.panel-header {
+  margin-bottom: var(--sp-2xl);
+}
+.panel-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.panel-header h2 .accent { color: var(--gold-warm); }
+.panel-header p { color: var(--silver); font-size: 14px; }
+
+/* ═══════════════════════════════════════════
+   REUSABLE COMPONENTS
+   ═══════════════════════════════════════════ */
+
+/* Card */
+.card {
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--sh-inner);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.035);
+}
+.card-head h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px; font-weight: 700;
+  color: var(--ivory);
+}
+.card-head .action {
+  font-size: 11px; font-weight: 600;
+  color: var(--gold); cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: var(--t-fast);
+}
+.card-head .action:hover { color: var(--gold-warm); }
+.card-body { padding: 20px; }
+
+/* Stat cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: var(--sp-2xl);
+}
+.stat {
+  background: var(--charcoal);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  transition: var(--t-smooth);
+  position: relative;
+  overflow: hidden;
+}
+.stat:hover { border-color: rgba(201,162,39,0.12); transform: translateY(-1px); }
+.stat-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--r-md);
+  display: grid; place-items: center;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.stat-label { font-size: 11px; color: var(--steel); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.stat-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--cream); line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-change { font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+.stat-change.up { color: var(--success); }
+.stat-change.down { color: var(--danger); }
+.stat-change.neutral { color: var(--silver); }
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: var(--sp-2xl); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: var(--sp-2xl); }
+.grid-23 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: var(--sp-2xl); }
+.grid-32 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: var(--sp-2xl); }
+
+/* Table rows */
+.data-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+}
+.data-row:last-child { border-bottom: none; }
+.data-row .dr-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--r-md);
+  display: grid; place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.data-row .dr-info { flex: 1; }
+.data-row .dr-name { font-size: 13px; font-weight: 600; color: var(--ivory); }
+.data-row .dr-meta { font-size: 11px; color: var(--steel); }
+.data-row .dr-value { text-align: right; }
+.data-row .dr-primary { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--gold-warm); }
+.data-row .dr-secondary { font-size: 11px; color: var(--steel); }
+
+/* Tags / Chips */
+.tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.tag.gold { background: rgba(201,162,39,0.12); color: var(--gold-warm); }
+.tag.green { background: rgba(46,204,113,0.1); color: var(--success); }
+.tag.blue { background: rgba(91,164,207,0.1); color: var(--info); }
+.tag.red { background: rgba(232,90,79,0.1); color: var(--danger); }
+.tag.purple { background: rgba(122,95,175,0.1); color: var(--dusk); }
+.tag.orange { background: rgba(245,166,35,0.1); color: var(--warning); }
+
+/* Buttons */
+.btn {
+  padding: 8px 18px;
+  border-radius: var(--r-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  transition: var(--t-fast);
+  border: none;
+  letter-spacing: 0.02em;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+  color: var(--black);
+}
+.btn-gold:hover { box-shadow: var(--sh-gold); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--pearl);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold-warm); }
+
+/* Filter pills */
+.filter-bar {
+  display: flex; gap: 6px; margin-bottom: var(--sp-xl);
+  flex-wrap: wrap;
+}
+.pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  background: var(--slate);
+  color: var(--pearl);
+  border: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: var(--t-fast);
+  user-select: none;
+}
+.pill:hover { border-color: rgba(201,162,39,0.2); color: var(--ivory); }
+.pill.active { background: var(--gold-glow); border-color: var(--gold); color: var(--gold-warm); }
+
+/* Progress bars */
+.progress-bar {
+  height: 6px;
+  background: var(--slate);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s var(--ease);
+}
+.progress-fill.gold { background: linear-gradient(90deg, var(--gold-dark), var(--gold-warm)); }
+.progress-fill.green { background: linear-gradient(90deg, #1a8a4a, var(--success)); }
+.progress-fill.blue { background: linear-gradient(90deg, #2a6aa0, var(--info)); }
+
+/* Feed items */
+.feed-item {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  transition: var(--t-fast);
+}
+.feed-item:hover { background: rgba(255,255,255,0.01); }
+.feed-item:last-child { border-bottom: none; }
+.feed-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.feed-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.feed-author { font-size: 13px; font-weight: 600; color: var(--ivory); }
+.feed-time { font-size: 11px; color: var(--steel); margin-left: auto; }
+.feed-text { font-size: 13px; color: var(--pearl); line-height: 1.6; margin-bottom: 8px; }
+.feed-actions { display: flex; gap: 16px; }
+.feed-action { font-size: 12px; color: var(--steel); cursor: pointer; transition: var(--t-fast); }
+.feed-action:hover { color: var(--gold-warm); }
+
+/* Chart placeholder */
+.mini-chart {
+  display: flex; align-items: flex-end; gap: 4px; height: 80px; padding-top: 8px;
+}
+.mini-bar {
+  flex: 1; border-radius: 2px 2px 0 0;
+  transition: var(--t-smooth);
+  cursor: pointer;
+  min-width: 6px;
+}
+.mini-bar:hover { opacity: 0.8; }
+
+/* Settings rows */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-info .setting-name { font-size: 14px; font-weight: 600; color: var(--ivory); }
+.setting-info .setting-desc { font-size: 12px; color: var(--steel); margin-top: 2px; }
+.toggle {
+  width: 40px; height: 22px;
+  background: var(--ash);
+  border-radius: 11px;
+  cursor: pointer;
+  position: relative;
+  transition: var(--t-fast);
+}
+.toggle.on { background: var(--gold); }
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--white);
+  transition: var(--t-fast);
+}
+.toggle.on::after { left: 21px; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .grid-2, .grid-23, .grid-32 { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══════ TOP BAR ═══════ -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🏇</div>
+    <div class="tb-brand-text">Legendary Stakes</div>
+  </div>
+  <div class="tb-search">
+    <span class="tb-search-icon">🔍</span>
+    <input type="text" placeholder="Search horses, records, transactions, media…">
+  </div>
+  <div class="tb-right">
+    <div class="tb-icon-btn" title="Notifications">🔔<span class="dot"></span></div>
+    <div class="tb-icon-btn" title="Messages">💬</div>
+    <div class="tb-icon-btn" title="Help">❓</div>
+    <div class="tb-profile">
+      <div class="tb-avatar">🤠</div>
+      <div>
+        <div class="tb-user-name">Logan Alley</div>
+        <div class="tb-user-roles">Owner · Breeder · Rider</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SIDEBAR ═══════ -->
+<div class="sidebar">
+  <!-- Profile Card -->
+  <div class="sb-profile-card">
+    <div class="sb-pc-name">Logan Alley</div>
+    <div class="sb-pc-roles">
+      <span class="sb-role-tag owner">Owner</span>
+      <span class="sb-role-tag breeder">Breeder</span>
+      <span class="sb-role-tag rider">Rider</span>
+    </div>
+    <div class="sb-pc-tier">Tier: <strong>Pro · $50/mo</strong></div>
+  </div>
+
+  <!-- Nav -->
+  <div class="sb-section">
+    <div class="sb-item active" data-panel="summary">
+      <span class="sb-icon">📊</span> Account Summary
+    </div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-section">
+    <div class="sb-label">Horses</div>
+    <div class="sb-item" data-panel="showbarn">
+      <span class="sb-icon">🐎</span> Show Barn
+      <span class="sb-badge">14</span>
+    </div>
+    <div class="sb-item" data-panel="season">
+      <span class="sb-icon">🏆</span> Season
+    </div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-section">
+    <div class="sb-label">Financial</div>
+    <div class="sb-item" data-panel="wallet">
+      <span class="sb-icon">💳</span> Wallet
+      <span class="sb-dot"></span>
+    </div>
+    <div class="sb-item" data-panel="bloodstock">
+      <span class="sb-icon">💰</span> Bloodstock Exchange
+    </div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-section">
+    <div class="sb-label">Platform</div>
+    <div class="sb-item" data-panel="legendaryu">
+      <span class="sb-icon">🎓</span> Legendary U
+      <span class="sb-badge">2</span>
+    </div>
+    <div class="sb-item" data-panel="feeds">
+      <span class="sb-icon">📡</span> Feeds
+    </div>
+    <div class="sb-item" data-panel="media">
+      <span class="sb-icon">📺</span> Media
+    </div>
+    <div class="sb-item" data-panel="breeding">
+      <span class="sb-icon">🧬</span> Breeding
+    </div>
+    <div class="sb-item" data-panel="analytics">
+      <span class="sb-icon">📈</span> Analytics
+    </div>
+  </div>
+
+  <div class="sb-divider"></div>
+
+  <div class="sb-section">
+    <div class="sb-item" data-panel="settings">
+      <span class="sb-icon">⚙️</span> Account Settings
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <button class="sb-footer-btn">🔄 Switch Profile</button>
+  </div>
+</div>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<div class="main">
+
+<!-- ═══════════════════════════════════════════
+     PANEL: ACCOUNT SUMMARY
+     ═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-summary">
+  <div class="panel-header">
+    <h2>Welcome back, <span class="accent">Logan</span></h2>
+    <p>Your Legendary Stakes ecosystem at a glance — Owner · Breeder · Rider</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">🐎</div>
+      <div class="stat-label">Total Horses</div>
+      <div class="stat-val">14</div>
+      <div class="stat-change up">▲ 3 this quarter</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">🏆</div>
+      <div class="stat-label">Stakes Rank</div>
+      <div class="stat-val">#34</div>
+      <div class="stat-change up">▲ 18 positions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">🧬</div>
+      <div class="stat-label">Active Breedings</div>
+      <div class="stat-val">6</div>
+      <div class="stat-change up">▲ 2 confirmed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(232,90,79,0.1);color:var(--danger)">💰</div>
+      <div class="stat-label">Portfolio Value</div>
+      <div class="stat-val">$412K</div>
+      <div class="stat-change up">▲ 18.4%</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(122,95,175,0.1);color:var(--dusk)">📊</div>
+      <div class="stat-label">Avg RPI</div>
+      <div class="stat-val">84.6</div>
+      <div class="stat-change up">▲ 4.1 pts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(245,166,35,0.1);color:var(--warning)">🎮</div>
+      <div class="stat-label">Fantasy Rank</div>
+      <div class="stat-val">#12</div>
+      <div class="stat-change up">▲ 5 spots</div>
+    </div>
+  </div>
+
+  <div class="grid-23">
+    <!-- Quick Actions -->
+    <div class="card">
+      <div class="card-head">
+        <h3>Recent Activity</h3>
+        <span class="action">View All</span>
+      </div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🏆</div>
+          <div class="dr-info">
+            <div class="dr-name">Desert Wind — 1st Place Reining</div>
+            <div class="dr-meta">Scottsdale Spring Classic · 2 hours ago</div>
+          </div>
+          <div class="dr-value"><span class="tag green">Won</span></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,170,110,0.08)">🧬</div>
+          <div class="dr-info">
+            <div class="dr-name">Breeding Contract Signed</div>
+            <div class="dr-meta">Golden Sunrise × Storm Chaser · 5 hours ago</div>
+          </div>
+          <div class="dr-value"><span class="tag blue">Confirmed</span></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(91,164,207,0.08)">💰</div>
+          <div class="dr-info">
+            <div class="dr-name">Syndication Distribution</div>
+            <div class="dr-meta">Alley Family Syndicate · Yesterday</div>
+          </div>
+          <div class="dr-value">
+            <div class="dr-primary">+$2,480</div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(232,90,79,0.08)">📋</div>
+          <div class="dr-info">
+            <div class="dr-name">AQHA Registration Approved</div>
+            <div class="dr-meta">2025 Colt — "Legendary Sunrise" · 2 days ago</div>
+          </div>
+          <div class="dr-value"><span class="tag gold">Registered</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming -->
+    <div class="card">
+      <div class="card-head">
+        <h3>Upcoming</h3>
+        <span class="action">Calendar</span>
+      </div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08);font-size:14px">📅</div>
+          <div class="dr-info">
+            <div class="dr-name">NRHA Derby</div>
+            <div class="dr-meta" style="color:var(--gold)">Feb 22 — Oklahoma City</div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,170,110,0.08);font-size:14px">🧬</div>
+          <div class="dr-info">
+            <div class="dr-name">Ultrasound — Golden Sunrise</div>
+            <div class="dr-meta">Feb 18 · Dr. Martinez</div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(91,164,207,0.08);font-size:14px">📺</div>
+          <div class="dr-info">
+            <div class="dr-name">Legendary U Clinic Live</div>
+            <div class="dr-meta">Feb 14 · Reining Fundamentals</div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(122,95,175,0.08);font-size:14px">💰</div>
+          <div class="dr-info">
+            <div class="dr-name">Bloodstock Auction Closes</div>
+            <div class="dr-meta">Feb 28 · 3 watched lots</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: SHOW BARN
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-showbarn">
+  <div class="panel-header">
+    <h2>Show Barn — <span class="accent">14 Head</span></h2>
+    <p>Your complete string across all disciplines. Filter by category to focus on sires, dams, or competition horses.</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="pill active" onclick="filterBarn(this,'all')">All (14)</div>
+    <div class="pill" onclick="filterBarn(this,'sire')">Sires (3)</div>
+    <div class="pill" onclick="filterBarn(this,'dam')">Dams (5)</div>
+    <div class="pill" onclick="filterBarn(this,'gelding')">Geldings (4)</div>
+    <div class="pill" onclick="filterBarn(this,'prospect')">Prospects (2)</div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <h3>Horse Portfolio</h3>
+      <span class="action">+ Add Horse</span>
+    </div>
+    <div class="card-body" id="barnList">
+      <!-- Sires -->
+      <div class="data-row barn-item" data-type="sire">
+        <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+        <div class="dr-info">
+          <div class="dr-name">Storm Chaser <span class="tag gold" style="margin-left:6px">Sire</span></div>
+          <div class="dr-meta">2019 Bay Stallion · Cutting · AQHA #6284710</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 91.2</div>
+          <div class="dr-secondary">#12 Cutting Sires</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="sire">
+        <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+        <div class="dr-info">
+          <div class="dr-name">Midnight Thunder <span class="tag gold" style="margin-left:6px">Sire</span></div>
+          <div class="dr-meta">2017 Black Stallion · Reining · AQHA #5984221</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 88.7</div>
+          <div class="dr-secondary">#23 Reining Sires</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="sire">
+        <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+        <div class="dr-info">
+          <div class="dr-name">Golden Legacy <span class="tag gold" style="margin-left:6px">Sire</span></div>
+          <div class="dr-meta">2016 Palomino Stallion · Multi-Disc · AQHA #5712034</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 86.1</div>
+          <div class="dr-secondary">#8 Progeny Index</div>
+        </div>
+      </div>
+      <!-- Dams -->
+      <div class="data-row barn-item" data-type="dam">
+        <div class="dr-icon" style="background:rgba(191,74,106,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Golden Sunrise <span class="tag purple" style="margin-left:6px">Dam</span></div>
+          <div class="dr-meta">2020 Palomino Mare · Breeding · In Foal to Storm Chaser</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 77.8</div>
+          <div class="dr-secondary">Due Apr 2026</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="dam">
+        <div class="dr-icon" style="background:rgba(191,74,106,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Desert Rose <span class="tag purple" style="margin-left:6px">Dam</span></div>
+          <div class="dr-meta">2018 Sorrel Mare · Reining · 4 foals produced</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 81.3</div>
+          <div class="dr-secondary">Open — Ready to Breed</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="dam">
+        <div class="dr-icon" style="background:rgba(191,74,106,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Whiskey Belle <span class="tag purple" style="margin-left:6px">Dam</span></div>
+          <div class="dr-meta">2019 Buckskin Mare · Cutting · In Foal to Midnight Thunder</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 74.2</div>
+          <div class="dr-secondary">Due May 2026</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="dam">
+        <div class="dr-icon" style="background:rgba(191,74,106,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Starlight Serenade <span class="tag purple" style="margin-left:6px">Dam</span></div>
+          <div class="dr-meta">2017 Gray Mare · Multi-Disc · 6 foals produced</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 83.9</div>
+          <div class="dr-secondary">#5 Broodmare Index</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="dam">
+        <div class="dr-icon" style="background:rgba(191,74,106,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Copper Creek <span class="tag purple" style="margin-left:6px">Dam</span></div>
+          <div class="dr-meta">2021 Red Roan Mare · Cutting · First-time Dam</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 69.4</div>
+          <div class="dr-secondary">Open — Maiden</div>
+        </div>
+      </div>
+      <!-- Geldings -->
+      <div class="data-row barn-item" data-type="gelding">
+        <div class="dr-icon" style="background:rgba(91,164,207,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Desert Wind <span class="tag blue" style="margin-left:6px">Competition</span></div>
+          <div class="dr-meta">2021 Sorrel Gelding · Reining · Primary Show Horse</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 84.6</div>
+          <div class="dr-secondary">#34 Overall</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="gelding">
+        <div class="dr-icon" style="background:rgba(91,164,207,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Midnight Ace <span class="tag blue" style="margin-left:6px">Competition</span></div>
+          <div class="dr-meta">2022 Black Gelding · Reining · Youth Division (Jake)</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 68.3</div>
+          <div class="dr-secondary">#128 Youth</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="gelding">
+        <div class="dr-icon" style="background:rgba(91,164,207,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Smoke Signal <span class="tag blue" style="margin-left:6px">Competition</span></div>
+          <div class="dr-meta">2020 Grullo Gelding · Cutting · Novice</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 72.1</div>
+          <div class="dr-secondary">#89 Novice Cutting</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="gelding">
+        <div class="dr-icon" style="background:rgba(91,164,207,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Iron Will <span class="tag blue" style="margin-left:6px">Competition</span></div>
+          <div class="dr-meta">2019 Bay Gelding · Reined Cow Horse · Open</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">RPI 79.8</div>
+          <div class="dr-secondary">#41 RCH Open</div>
+        </div>
+      </div>
+      <!-- Prospects -->
+      <div class="data-row barn-item" data-type="prospect">
+        <div class="dr-icon" style="background:rgba(245,166,35,0.08)">🐴</div>
+        <div class="dr-info">
+          <div class="dr-name">Legendary Sunrise <span class="tag orange" style="margin-left:6px">Prospect</span></div>
+          <div class="dr-meta">2025 Palomino Colt · Storm Chaser × Golden Sunrise · Unstarted</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">—</div>
+          <div class="dr-secondary">Weanling</div>
+        </div>
+      </div>
+      <div class="data-row barn-item" data-type="prospect">
+        <div class="dr-icon" style="background:rgba(245,166,35,0.08)">🐎</div>
+        <div class="dr-info">
+          <div class="dr-name">Thunder Rose <span class="tag orange" style="margin-left:6px">Prospect</span></div>
+          <div class="dr-meta">2024 Black Filly · Midnight Thunder × Desert Rose · In Training</div>
+        </div>
+        <div class="dr-value">
+          <div class="dr-primary">—</div>
+          <div class="dr-secondary">Yearling / Starting</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: SEASON
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-season">
+  <div class="panel-header">
+    <h2>Season — <span class="accent">2026</span></h2>
+    <p>Complete competition calendar, results, and season standings across all disciplines and entries.</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="pill active">All Disciplines</div>
+    <div class="pill">Reining</div>
+    <div class="pill">Cutting</div>
+    <div class="pill">Cow Horse</div>
+    <div class="pill">Youth</div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">🏆</div>
+      <div class="stat-label">Season Earnings</div>
+      <div class="stat-val">$48,720</div>
+      <div class="stat-change up">▲ 34% vs. 2025</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">📋</div>
+      <div class="stat-label">Events Entered</div>
+      <div class="stat-val">18</div>
+      <div class="stat-change neutral">of 42 planned</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">🥇</div>
+      <div class="stat-label">Top 3 Finishes</div>
+      <div class="stat-val">11</div>
+      <div class="stat-change up">61% placement rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(122,95,175,0.1);color:var(--dusk)">📊</div>
+      <div class="stat-label">Composite Score</div>
+      <div class="stat-val">218.5</div>
+      <div class="stat-change up">▲ 12.4 pts</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <h3>2026 Competition Log</h3>
+      <span class="action">Export CSV</span>
+    </div>
+    <div class="card-body">
+      <div class="data-row">
+        <div class="dr-icon" style="background:rgba(46,204,113,0.08)">🥇</div>
+        <div class="dr-info">
+          <div class="dr-name">Scottsdale Spring Classic — Open Reining</div>
+          <div class="dr-meta">Feb 8, 2026 · Desert Wind · Score: 224.5</div>
+        </div>
+        <div class="dr-value"><div class="dr-primary">$8,400</div><div class="dr-secondary">1st of 34</div></div>
+      </div>
+      <div class="data-row">
+        <div class="dr-icon" style="background:rgba(91,164,207,0.08)">🥈</div>
+        <div class="dr-info">
+          <div class="dr-name">Arizona Cutting Futurity — Novice</div>
+          <div class="dr-meta">Jan 28, 2026 · Smoke Signal · Score: 218.0</div>
+        </div>
+        <div class="dr-value"><div class="dr-primary">$4,200</div><div class="dr-secondary">2nd of 28</div></div>
+      </div>
+      <div class="data-row">
+        <div class="dr-icon" style="background:rgba(46,204,113,0.08)">🥇</div>
+        <div class="dr-info">
+          <div class="dr-name">Southwest Reining Championship — Open</div>
+          <div class="dr-meta">Jan 15, 2026 · Desert Wind · Score: 221.0</div>
+        </div>
+        <div class="dr-value"><div class="dr-primary">$6,800</div><div class="dr-secondary">1st of 41</div></div>
+      </div>
+      <div class="data-row">
+        <div class="dr-icon" style="background:rgba(122,95,175,0.08)">🥉</div>
+        <div class="dr-info">
+          <div class="dr-name">NRCHA Stallion Stakes — Open RCH</div>
+          <div class="dr-meta">Jan 10, 2026 · Iron Will · Score: 436.5 composite</div>
+        </div>
+        <div class="dr-value"><div class="dr-primary">$3,100</div><div class="dr-secondary">3rd of 22</div></div>
+      </div>
+      <div class="data-row">
+        <div class="dr-icon" style="background:rgba(245,166,35,0.08)">4th</div>
+        <div class="dr-info">
+          <div class="dr-name">Cactus Classic — Youth Reining</div>
+          <div class="dr-meta">Jan 5, 2026 · Midnight Ace (Jake) · Score: 210.0</div>
+        </div>
+        <div class="dr-value"><div class="dr-primary">$800</div><div class="dr-secondary">4th of 19</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: WALLET
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-wallet">
+  <div class="panel-header">
+    <h2>Wallet — <span class="accent">Enterprise</span></h2>
+    <p>Master wallet overview across all profiles and entities. Fund, transfer, and manage spending in real time.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">💰</div>
+      <div class="stat-label">Master Balance</div>
+      <div class="stat-val">$34,680</div>
+      <div class="stat-change up">▲ $12,400 this month</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">🏦</div>
+      <div class="stat-label">Escrow Held</div>
+      <div class="stat-val">$8,200</div>
+      <div class="stat-change neutral">2 pending transactions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">⭐</div>
+      <div class="stat-label">Reward Credits</div>
+      <div class="stat-val">4,280</div>
+      <div class="stat-change up">▲ 840 earned this month</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(122,95,175,0.1);color:var(--dusk)">📊</div>
+      <div class="stat-label">Monthly Spend</div>
+      <div class="stat-val">$6,140</div>
+      <div class="stat-change down">▼ 12% vs. last month</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Recent Transactions</h3><span class="action">View All</span></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,204,113,0.08)">↓</div>
+          <div class="dr-info"><div class="dr-name">Competition Winnings — Scottsdale</div><div class="dr-meta">Feb 8 · Desert Wind</div></div>
+          <div class="dr-value"><div class="dr-primary" style="color:var(--success)">+$8,400</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(232,90,79,0.08)">↑</div>
+          <div class="dr-info"><div class="dr-name">Entry Fee — NRHA Derby</div><div class="dr-meta">Feb 6 · 3 horses entered</div></div>
+          <div class="dr-value"><div class="dr-primary" style="color:var(--danger)">-$2,400</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,204,113,0.08)">↓</div>
+          <div class="dr-info"><div class="dr-name">Syndication Distribution</div><div class="dr-meta">Feb 1 · Alley Family Syndicate</div></div>
+          <div class="dr-value"><div class="dr-primary" style="color:var(--success)">+$2,480</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(232,90,79,0.08)">↑</div>
+          <div class="dr-info"><div class="dr-name">Stud Fee — Storm Chaser Service</div><div class="dr-meta">Jan 30 · Breeding contract</div></div>
+          <div class="dr-value"><div class="dr-primary" style="color:var(--danger)">-$3,500</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,204,113,0.08)">↓</div>
+          <div class="dr-info"><div class="dr-name">Stud Fee Received — Midnight Thunder</div><div class="dr-meta">Jan 28 · External mare owner</div></div>
+          <div class="dr-value"><div class="dr-primary" style="color:var(--success)">+$5,000</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Wallet Breakdown</h3><span class="action">Manage</span></div>
+      <div class="card-body">
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="stat-label" style="margin:0">Personal Wallet</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--ivory)">$18,420</span></div>
+          <div class="progress-bar"><div class="progress-fill gold" style="width:53%"></div></div>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="stat-label" style="margin:0">Sunrise Ranch LLC</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--ivory)">$12,060</span></div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:35%"></div></div>
+        </div>
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="stat-label" style="margin:0">Syndicate Account</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--ivory)">$4,200</span></div>
+          <div class="progress-bar"><div class="progress-fill blue" style="width:12%"></div></div>
+        </div>
+        <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.03)">
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-gold" style="flex:1">+ Fund Wallet</button>
+            <button class="btn btn-outline" style="flex:1">Transfer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: LEGENDARY U
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-legendaryu">
+  <div class="panel-header">
+    <h2>Legendary <span class="accent">U</span></h2>
+    <p>Your equine education hub — clinics, courses, certifications, and live sessions from world-class professionals.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">🎓</div>
+      <div class="stat-label">Courses Completed</div>
+      <div class="stat-val">8</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">📺</div>
+      <div class="stat-label">Hours Watched</div>
+      <div class="stat-val">46.2</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">🏅</div>
+      <div class="stat-label">Certifications</div>
+      <div class="stat-val">3</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Continue Learning</h3></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">📺</div>
+          <div class="dr-info">
+            <div class="dr-name">Advanced Reining Maneuvers</div>
+            <div class="dr-meta">Module 6 of 10 · 68% complete</div>
+            <div class="progress-bar" style="margin-top:8px;max-width:200px"><div class="progress-fill gold" style="width:68%"></div></div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,170,110,0.08)">🧬</div>
+          <div class="dr-info">
+            <div class="dr-name">Breeding Management Masterclass</div>
+            <div class="dr-meta">Module 3 of 8 · 38% complete</div>
+            <div class="progress-bar" style="margin-top:8px;max-width:200px"><div class="progress-fill green" style="width:38%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Upcoming Live Sessions</h3></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(232,90,79,0.08)">🔴</div>
+          <div class="dr-info">
+            <div class="dr-name">Reining Fundamentals w/ Tim McQuay</div>
+            <div class="dr-meta" style="color:var(--gold)">Feb 14, 2026 · 7:00 PM CT · Live</div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(91,164,207,0.08)">📅</div>
+          <div class="dr-info">
+            <div class="dr-name">Equine Nutrition for Performance</div>
+            <div class="dr-meta">Feb 21, 2026 · 6:00 PM CT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: FEEDS
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-feeds">
+  <div class="panel-header">
+    <h2>Feeds — <span class="accent">Community</span></h2>
+    <p>Your social hub. Follow trainers, breeders, and competitors. Share wins, barn life, and industry news.</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="pill active">All</div>
+    <div class="pill">Following</div>
+    <div class="pill">Industry News</div>
+    <div class="pill">My Posts</div>
+    <div class="pill">Trending</div>
+  </div>
+
+  <div class="card">
+    <div class="card-body" style="padding:0">
+      <div class="feed-item">
+        <div class="feed-header">
+          <div class="feed-avatar" style="background:rgba(201,162,39,0.1)">🤠</div>
+          <div><div class="feed-author">Logan Alley</div><div style="font-size:11px;color:var(--steel)">Owner · Breeder · Rider</div></div>
+          <div class="feed-time">2 hours ago</div>
+        </div>
+        <div class="feed-text">Desert Wind brought it home at Scottsdale! 224.5 in Open Reining. This horse has heart — nothing like the feeling when it all comes together in the pen. Big thanks to everyone at the barn who helped us get here. On to the NRHA Derby! 🏆🐎</div>
+        <div class="feed-actions">
+          <span class="feed-action">❤️ 47</span>
+          <span class="feed-action">💬 12</span>
+          <span class="feed-action">🔁 8</span>
+          <span class="feed-action">📤 Share</span>
+        </div>
+      </div>
+      <div class="feed-item">
+        <div class="feed-header">
+          <div class="feed-avatar" style="background:rgba(46,170,110,0.1)">🧑‍🌾</div>
+          <div><div class="feed-author">Martinez Veterinary</div><div style="font-size:11px;color:var(--steel)">Equine Vet · Scottsdale, AZ</div></div>
+          <div class="feed-time">4 hours ago</div>
+        </div>
+        <div class="feed-text">Great seminar this morning on foaling season prep. Reminder to all breeders — get your mares' Caslick's evaluated early and keep those vaccination schedules tight. Happy to answer questions in the comments!</div>
+        <div class="feed-actions">
+          <span class="feed-action">❤️ 31</span>
+          <span class="feed-action">💬 9</span>
+          <span class="feed-action">🔁 14</span>
+          <span class="feed-action">📤 Share</span>
+        </div>
+      </div>
+      <div class="feed-item">
+        <div class="feed-header">
+          <div class="feed-avatar" style="background:rgba(91,164,207,0.1)">📰</div>
+          <div><div class="feed-author">Legendary Stakes News</div><div style="font-size:11px;color:var(--steel)">Official · Industry Updates</div></div>
+          <div class="feed-time">6 hours ago</div>
+        </div>
+        <div class="feed-text">NRHA announces record purse for the 2026 Derby — $2.4M total. Entries close Feb 15. Are you ready? Check the Bloodstock Exchange for last-minute Derby prospects. 💰</div>
+        <div class="feed-actions">
+          <span class="feed-action">❤️ 124</span>
+          <span class="feed-action">💬 38</span>
+          <span class="feed-action">🔁 52</span>
+          <span class="feed-action">📤 Share</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: MEDIA
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-media">
+  <div class="panel-header">
+    <h2>Media — <span class="accent">Library</span></h2>
+    <p>Premium video content, competition replays, clinics, and your personal media vault.</p>
+  </div>
+
+  <div class="filter-bar">
+    <div class="pill active">All</div>
+    <div class="pill">My Runs</div>
+    <div class="pill">Clinics</div>
+    <div class="pill">Competition Replays</div>
+    <div class="pill">Saved</div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="cursor:pointer">
+      <div style="height:140px;background:linear-gradient(135deg,rgba(201,162,39,0.15),rgba(201,162,39,0.05));display:grid;place-items:center;font-size:40px;border-bottom:1px solid rgba(255,255,255,0.03)">🎬</div>
+      <div class="card-body" style="padding:14px">
+        <div style="font-size:13px;font-weight:600;color:var(--ivory)">Desert Wind — Scottsdale Run</div>
+        <div style="font-size:11px;color:var(--steel);margin-top:3px">Feb 8, 2026 · 4:32 · Open Reining</div>
+        <div style="margin-top:8px"><span class="tag gold">Your Run</span></div>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div style="height:140px;background:linear-gradient(135deg,rgba(91,164,207,0.1),rgba(91,164,207,0.03));display:grid;place-items:center;font-size:40px;border-bottom:1px solid rgba(255,255,255,0.03)">📺</div>
+      <div class="card-body" style="padding:14px">
+        <div style="font-size:13px;font-weight:600;color:var(--ivory)">NRHA Derby Preview Show</div>
+        <div style="font-size:11px;color:var(--steel);margin-top:3px">Feb 7, 2026 · 28:14 · Analysis</div>
+        <div style="margin-top:8px"><span class="tag blue">Featured</span></div>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div style="height:140px;background:linear-gradient(135deg,rgba(46,170,110,0.1),rgba(46,170,110,0.03));display:grid;place-items:center;font-size:40px;border-bottom:1px solid rgba(255,255,255,0.03)">🎓</div>
+      <div class="card-body" style="padding:14px">
+        <div style="font-size:13px;font-weight:600;color:var(--ivory)">Foaling Prep Masterclass</div>
+        <div style="font-size:11px;color:var(--steel);margin-top:3px">Jan 2026 · 1:14:22 · Breeding</div>
+        <div style="margin-top:8px"><span class="tag green">Legendary U</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: BLOODSTOCK EXCHANGE
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-bloodstock">
+  <div class="panel-header">
+    <h2>Bloodstock <span class="accent">Exchange</span></h2>
+    <p>Buy, sell, and track equine assets. Live auctions, private treaty sales, and market intelligence.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">📊</div>
+      <div class="stat-label">Active Listings</div>
+      <div class="stat-val">2</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">👁️</div>
+      <div class="stat-label">Watchlist</div>
+      <div class="stat-val">7</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">💰</div>
+      <div class="stat-label">Lifetime Sales</div>
+      <div class="stat-val">$126K</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Your Active Listings</h3><span class="action">+ New Listing</span></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+          <div class="dr-info">
+            <div class="dr-name">Storm Chaser — Breeding Rights</div>
+            <div class="dr-meta">Limited shares · 3 of 5 remaining · Auction ends Feb 28</div>
+          </div>
+          <div class="dr-value"><div class="dr-primary">$15,000</div><div class="dr-secondary">Current Bid</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐎</div>
+          <div class="dr-info">
+            <div class="dr-name">Smoke Signal — Private Treaty</div>
+            <div class="dr-meta">2020 Grullo Gelding · Novice Cutting prospect · 14 inquiries</div>
+          </div>
+          <div class="dr-value"><div class="dr-primary">$28,000</div><div class="dr-secondary">Asking Price</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Watchlist Highlights</h3><span class="action">View All 7</span></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(232,90,79,0.08)">🔥</div>
+          <div class="dr-info">
+            <div class="dr-name">Dual Smart Rey Grandson — 3yo Cutting</div>
+            <div class="dr-meta">Auction closes in 4 hours · 12 bidders</div>
+          </div>
+          <div class="dr-value"><div class="dr-primary">$42,000</div><div class="dr-secondary">Hot Auction</div></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(91,164,207,0.08)">📋</div>
+          <div class="dr-info">
+            <div class="dr-name">Whizkey N Diamonds Mare — Proven Dam</div>
+            <div class="dr-meta">Private Treaty · In Foal to Spooks Gotta Whiz</div>
+          </div>
+          <div class="dr-value"><div class="dr-primary">$65,000</div><div class="dr-secondary">Asking</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: BREEDING
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-breeding">
+  <div class="panel-header">
+    <h2>Breeding — <span class="accent">Operations</span></h2>
+    <p>Manage your stallion book, mare rotations, foaling schedule, and AI cross-matching tools.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">🐴</div>
+      <div class="stat-label">Standing Stallions</div>
+      <div class="stat-val">3</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(191,74,106,0.1);color:var(--rose)">🐎</div>
+      <div class="stat-label">Broodmares</div>
+      <div class="stat-val">5</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">🤰</div>
+      <div class="stat-label">Mares In Foal</div>
+      <div class="stat-val">2</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(245,166,35,0.1);color:var(--warning)">📋</div>
+      <div class="stat-label">2026 Contracts</div>
+      <div class="stat-val">11</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Stallion Book — 2026 Season</h3><span class="action">Manage Bookings</span></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+          <div class="dr-info">
+            <div class="dr-name">Storm Chaser</div>
+            <div class="dr-meta">Fee: $5,000 · 8 of 15 bookings filled · Cutting Sire</div>
+            <div class="progress-bar" style="margin-top:6px;max-width:180px"><div class="progress-fill gold" style="width:53%"></div></div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+          <div class="dr-info">
+            <div class="dr-name">Midnight Thunder</div>
+            <div class="dr-meta">Fee: $3,500 · 5 of 12 bookings filled · Reining Sire</div>
+            <div class="progress-bar" style="margin-top:6px;max-width:180px"><div class="progress-fill gold" style="width:42%"></div></div>
+          </div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(201,162,39,0.08)">🐴</div>
+          <div class="dr-info">
+            <div class="dr-name">Golden Legacy</div>
+            <div class="dr-meta">Fee: $4,000 · 3 of 10 bookings filled · Multi-Disc</div>
+            <div class="progress-bar" style="margin-top:6px;max-width:180px"><div class="progress-fill gold" style="width:30%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Foaling Schedule</h3><span class="action">Calendar View</span></div>
+      <div class="card-body">
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(46,204,113,0.08)">🤰</div>
+          <div class="dr-info">
+            <div class="dr-name">Golden Sunrise × Storm Chaser</div>
+            <div class="dr-meta">Due: April 12, 2026 · Day 298 · Status: Healthy</div>
+          </div>
+          <div class="dr-value"><span class="tag green">On Track</span></div>
+        </div>
+        <div class="data-row">
+          <div class="dr-icon" style="background:rgba(245,166,35,0.08)">🤰</div>
+          <div class="dr-info">
+            <div class="dr-name">Whiskey Belle × Midnight Thunder</div>
+            <div class="dr-meta">Due: May 3, 2026 · Day 277 · Ultrasound: Feb 20</div>
+          </div>
+          <div class="dr-value"><span class="tag orange">Monitoring</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: ANALYTICS
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-analytics">
+  <div class="panel-header">
+    <h2>Analytics — <span class="accent">Intelligence</span></h2>
+    <p>Performance tracking, financial insights, breeding ROI, and competitive benchmarking across your entire operation.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(201,162,39,0.1);color:var(--gold-warm)">📊</div>
+      <div class="stat-label">Total ROI (2025)</div>
+      <div class="stat-val">247%</div>
+      <div class="stat-change up">▲ vs. 183% in 2024</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(46,204,113,0.1);color:var(--success)">🏆</div>
+      <div class="stat-label">Win Rate</div>
+      <div class="stat-val">34%</div>
+      <div class="stat-change up">▲ 8% improvement</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(91,164,207,0.1);color:var(--info)">🧬</div>
+      <div class="stat-label">Progeny Avg RPI</div>
+      <div class="stat-val">76.4</div>
+      <div class="stat-change up">▲ 5.2 vs. industry avg</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:rgba(122,95,175,0.1);color:var(--dusk)">💰</div>
+      <div class="stat-label">Cost Per Point</div>
+      <div class="stat-val">$127</div>
+      <div class="stat-change up">▲ 22% more efficient</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Performance Trend — 12 Months</h3></div>
+      <div class="card-body">
+        <div class="mini-chart">
+          <div class="mini-bar" style="height:35%;background:var(--gold-dark)"></div>
+          <div class="mini-bar" style="height:42%;background:var(--gold-dark)"></div>
+          <div class="mini-bar" style="height:38%;background:var(--gold-dark)"></div>
+          <div class="mini-bar" style="height:55%;background:var(--gold)"></div>
+          <div class="mini-bar" style="height:48%;background:var(--gold)"></div>
+          <div class="mini-bar" style="height:62%;background:var(--gold)"></div>
+          <div class="mini-bar" style="height:58%;background:var(--gold)"></div>
+          <div class="mini-bar" style="height:71%;background:var(--gold)"></div>
+          <div class="mini-bar" style="height:65%;background:var(--gold-warm)"></div>
+          <div class="mini-bar" style="height:78%;background:var(--gold-warm)"></div>
+          <div class="mini-bar" style="height:82%;background:var(--gold-warm)"></div>
+          <div class="mini-bar" style="height:90%;background:var(--gold-warm)"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--steel)">
+          <span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Breeding ROI Breakdown</h3></div>
+      <div class="card-body">
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--ivory)">Stud Fees Earned</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--success)">$67,500</span></div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:80%"></div></div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--ivory)">Foal Sales</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--success)">$84,000</span></div>
+          <div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:12px;color:var(--ivory)">Breeding Costs</span><span style="font-family:'JetBrains Mono';font-size:12px;color:var(--danger)">-$38,200</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:45%;background:var(--danger)"></div></div>
+        </div>
+        <div style="padding-top:12px;border-top:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;font-weight:600;color:var(--ivory)">Net Breeding Income</span>
+          <span style="font-family:'JetBrains Mono';font-size:16px;font-weight:700;color:var(--gold-warm)">$113,300</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PANEL: ACCOUNT SETTINGS
+     ═══════════════════════════════════════════ -->
+<div class="panel" id="panel-settings">
+  <div class="panel-header">
+    <h2>Account <span class="accent">Settings</span></h2>
+    <p>Manage your profile, security, notifications, subscription, and platform preferences.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head"><h3>Profile Information</h3><span class="action">Edit</span></div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Full Name</div><div class="setting-desc">Logan Alley</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Email</div><div class="setting-desc">logan@sunriseranch.com</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Phone</div><div class="setting-desc">(480) 555-0147</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">AQHA Member #</div><div class="setting-desc">2847103</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Roles</div><div class="setting-desc">Owner · Breeder · Rider</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Security & Privacy</h3></div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Two-Factor Authentication</div><div class="setting-desc">Authenticator app enabled</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Biometric Login</div><div class="setting-desc">Face ID / Touch ID</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Login Notifications</div><div class="setting-desc">Email on new device login</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Profile PIN Lock</div><div class="setting-desc">4-digit PIN for entity profiles</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Subscription</h3><span class="action">Manage Plan</span></div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Current Plan</div><div class="setting-desc" style="color:var(--gold-warm);font-weight:600">Pro Tier — $50/month</div></div>
+          <button class="btn btn-gold" style="font-size:11px;padding:6px 14px">Upgrade</button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Profiles Used</div><div class="setting-desc">5 of 15 (including 2 entities of 3 max)</div></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Next Billing Date</div><div class="setting-desc">March 1, 2026 · Visa ending 4821</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Notifications</h3></div>
+      <div class="card-body">
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Competition Results</div><div class="setting-desc">Push + Email</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Breeding Alerts</div><div class="setting-desc">Foaling updates, vet reminders</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Bloodstock Activity</div><div class="setting-desc">Bids, watchlist changes</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info"><div class="setting-name">Feed Interactions</div><div class="setting-desc">Likes, comments, shares</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT — Panel Navigation & Filtering
+     ═══════════════════════════════════════════ -->
+<script>
+// === Panel Navigation ===
+document.querySelectorAll('.sb-item[data-panel]').forEach(item => {
+  item.addEventListener('click', () => {
+    // Update sidebar active state
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+
+    // Show the target panel
+    const target = item.getAttribute('data-panel');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('panel-' + target);
+    if (panel) {
+      panel.classList.add('active');
+      // Reset animation
+      panel.style.animation = 'none';
+      panel.offsetHeight; // trigger reflow
+      panel.style.animation = '';
+    }
+
+    // Scroll main to top
+    document.querySelector('.main').scrollTop = 0;
+  });
+});
+
+// === Show Barn Filtering ===
+function filterBarn(pill, type) {
+  // Update active pill
+  pill.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  pill.classList.add('active');
+
+  // Filter rows
+  document.querySelectorAll('.barn-item').forEach(row => {
+    if (type === 'all') {
+      row.style.display = 'flex';
+    } else {
+      row.style.display = row.getAttribute('data-type') === type ? 'flex' : 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
