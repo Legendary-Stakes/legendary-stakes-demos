@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legendary Stakes Investor Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #0a0e14;
+            --deep-navy: #151b26;
+            --track-surface: #1a2332;
+            --gold: #d4af37;
+            --gold-light: #f4d876;
+            --gold-dark: #b8941f;
+            --emerald: #10b981;
+            --emerald-light: #34d399;
+            --crimson: #ef4444;
+            --slate: #64748b;
+            --slate-light: #94a3b8;
+            --white: #f8fafc;
+            --border: rgba(212, 175, 55, 0.15);
+            
+            --font-display: 'Crimson Pro', serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, var(--midnight) 0%, var(--deep-navy) 50%, #0d1520 100%);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient background effects */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            margin-bottom: 3rem;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .investor-info {
+            text-align: right;
+        }
+
+        .investor-name {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .investor-id {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--slate);
+        }
+
+        /* Hero Metrics */
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--track-surface) 0%, var(--deep-navy) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .metric-card:nth-child(1) { animation-delay: 0.1s; }
+        .metric-card:nth-child(2) { animation-delay: 0.2s; }
+        .metric-card:nth-child(3) { animation-delay: 0.3s; }
+        .metric-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+            opacity: 0.5;
+        }
+
+        .metric-card.highlight::before {
+            opacity: 1;
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .metric-value.gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .metric-change.positive {
+            color: var(--emerald);
+        }
+
+        .metric-change.neutral {
+            color: var(--slate-light);
+        }
+
+        /* Your Investment */
+        .your-investment {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out 0.5s backwards;
+        }
+
+        .your-investment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .investment-item h3 {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .investment-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
+
+        .investment-subtext {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+        }
+
+        .roi-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-light) 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Phase Progress */
+        .phase-progress {
+            background: var(--track-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.6s ease-out 0.6s backwards;
+        }
+
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .phase-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .phase-badge {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid var(--gold);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--gold) 0%, var(--emerald) 50%, var(--slate) 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            animation: fadeInLeft 0.4s ease-out backwards;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.7s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.9s; }
+        .timeline-item:nth-child(4) { animation-delay: 1.0s; }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -2.25rem;
+            top: 0.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 3px solid var(--track-surface);
+            background: var(--slate);
+            z-index: 1;
+        }
+
+        .timeline-item.complete .timeline-marker {
+            background: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .timeline-item.active .timeline-marker {
+            background: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.8); }
+        }
+
+        .timeline-content {
+            background: rgba(26, 35, 50, 0.5);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--white);
+        }
+
+        .timeline-date {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+            font-family: var(--font-mono);
+        }
+
+        .timeline-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            font-size: 0.875rem;
+        }
+
+        .detail-label {
+            color: var(--slate);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(100, 116, 139, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-light) 100%);
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+
+        /* Features Grid */
+        .features-section {
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.6s ease-out 1.1s backwards;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--slate-light);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .filter-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--midnight);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--track-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: var(--white);
+            flex: 1;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.shipped {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+            border: 1px solid var(--emerald);
+        }
+
+        .status-badge.development {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .status-badge.planned {
+            background: rgba(100, 116, 139, 0.15);
+            color: var(--slate-light);
+            border: 1px solid var(--slate);
+        }
+
+        .feature-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .feature-metric {
+            font-size: 0.875rem;
+        }
+
+        .feature-metric-label {
+            color: var(--slate);
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-metric-value {
+            color: var(--white);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        /* Revenue Breakdown */
+        .revenue-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.6s ease-out 1.2s backwards;
+        }
+
+        .revenue-chart {
+            background: var(--track-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .chart-header {
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+        }
+
+        .revenue-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .revenue-bar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .revenue-bar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .revenue-bar-name {
+            font-size: 0.875rem;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .revenue-bar-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .revenue-bar-track {
+            height: 32px;
+            background: rgba(100, 116, 139, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .revenue-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dark) 0%, var(--gold) 50%, var(--gold-light) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--midnight);
+            transition: width 1s ease-out;
+        }
+
+        .next-round {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .next-round-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .next-round-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .round-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .round-stat-label {
+            font-size: 0.875rem;
+            color: var(--slate-light);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .round-stat-value {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .round-stat-value.highlight {
+            background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .countdown {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--slate-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-value {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+            color: var(--slate);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .hero-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .revenue-section {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="logo">LEGENDARY STAKES</div>
+                <div class="investor-info">
+                    <div class="investor-name">Investor Portal</div>
+                    <div class="investor-id">ID: INV-2026-001</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Metrics -->
+        <div class="hero-metrics">
+            <div class="metric-card highlight">
+                <div class="metric-label">Current Valuation</div>
+                <div class="metric-value gold">$16.2M</div>
+                <div class="metric-change positive">
+                    <span>▲ $6.2M (62%)</span>
+                    <span style="color: var(--slate);">since inception</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Annual Recurring Revenue</div>
+                <div class="metric-value">$150K</div>
+                <div class="metric-change positive">
+                    <span>▲ $150K</span>
+                    <span style="color: var(--slate);">Phase 1 target achieved</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Active Users</div>
+                <div class="metric-value">12.4K</div>
+                <div class="metric-change positive">
+                    <span>▲ 340%</span>
+                    <span style="color: var(--slate);">last 90 days</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Next Milestone</div>
+                <div class="metric-value" style="font-size: 1.75rem;">Event Software</div>
+                <div class="metric-change neutral">
+                    <span>📅 Target: Mar 2026</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your Investment -->
+        <div class="your-investment">
+            <div class="investment-grid">
+                <div class="investment-item">
+                    <h3>Your Investment</h3>
+                    <div class="investment-value">$500,000</div>
+                    <div class="investment-subtext">Invested: Feb 15, 2026</div>
+                </div>
+
+                <div class="investment-item">
+                    <h3>Equity Owned</h3>
+                    <div class="investment-value">1.00%</div>
+                    <div class="investment-subtext">Via SAFE Note (10% cap)</div>
+                </div>
+
+                <div class="investment-item">
+                    <h3>Current Value</h3>
+                    <div class="investment-value">$810,000</div>
+                    <div class="roi-badge">+62% ROI</div>
+                </div>
+
+                <div class="investment-item">
+                    <h3>Projected Value (Series A)</h3>
+                    <div class="investment-value">$2.5M</div>
+                    <div class="investment-subtext">Est. July 2026 (5x return)</div>
+                </div>
+
+                <div class="investment-item">
+                    <h3>Projected Value (Series B)</h3>
+                    <div class="investment-value">$8.75M</div>
+                    <div class="investment-subtext">Est. Jan 2027 (17.5x return)</div>
+                </div>
+
+                <div class="investment-item">
+                    <h3>Projected Value (IPO)</h3>
+                    <div class="investment-value">$25M</div>
+                    <div class="investment-subtext">Est. 2028 (50x return)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase Progress -->
+        <div class="phase-progress">
+            <div class="phase-header">
+                <h2 class="phase-title">Capital Raise Timeline</h2>
+                <span class="phase-badge">Phase 1: Foundation</span>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item complete">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div class="timeline-name">Company Inception</div>
+                            <div class="timeline-date">Q4 2025</div>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Valuation</div>
+                                <div class="detail-value">$5.0M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Equity Sold</div>
+                                <div class="detail-value">0%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Status</div>
+                                <div class="detail-value" style="color: var(--emerald);">✓ Complete</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item active">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div class="timeline-name">SAFE Note Round</div>
+                            <div class="timeline-date">Feb 2026</div>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Target Valuation</div>
+                                <div class="detail-value">$10.0M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Equity Offered</div>
+                                <div class="detail-value">10%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Raise Amount</div>
+                                <div class="detail-value">$1.0M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Status</div>
+                                <div class="detail-value" style="color: var(--gold);">● In Progress</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div class="timeline-name">Series A</div>
+                            <div class="timeline-date">July 2026</div>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Target Valuation</div>
+                                <div class="detail-value">$50.0M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Equity Offered</div>
+                                <div class="detail-value">9%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Est. Raise Amount</div>
+                                <div class="detail-value">$4.5M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Your 1% Value</div>
+                                <div class="detail-value" style="color: var(--emerald);">$2.5M</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div class="timeline-name">Series B</div>
+                            <div class="timeline-date">Jan 2027</div>
+                        </div>
+                        <div class="timeline-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Target Valuation</div>
+                                <div class="detail-value">$350M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Equity Offered</div>
+                                <div class="detail-value">6%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Est. Raise Amount</div>
+                                <div class="detail-value">$21.0M</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Your 1% Value</div>
+                                <div class="detail-value" style="color: var(--emerald);">$8.75M</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="section-header">
+                <h2 class="section-title">Feature Development & Valuation Impact</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="shipped">Shipped</button>
+                    <button class="filter-btn" data-filter="development">In Dev</button>
+                    <button class="filter-btn" data-filter="planned">Planned</button>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card" data-status="shipped">
+                    <div class="feature-header">
+                        <div class="feature-name">7M Asset Database</div>
+                        <span class="status-badge shipped">Shipped</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$50K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$5.0M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$0</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">ROI</div>
+                            <div class="feature-metric-value">100x</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="shipped">
+                    <div class="feature-header">
+                        <div class="feature-name">RPI Engine v1.0</div>
+                        <span class="status-badge shipped">Shipped</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$40K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$1.0M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$50K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Multiple</div>
+                            <div class="feature-metric-value">20x ARR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="shipped">
+                    <div class="feature-header">
+                        <div class="feature-name">Horse Profiles (ESPN-style)</div>
+                        <span class="status-badge shipped">Shipped</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$30K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$1.5M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$100K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Multiple</div>
+                            <div class="feature-metric-value">15x ARR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="development">
+                    <div class="feature-header">
+                        <div class="feature-name">Event Software (Entry/Stall)</div>
+                        <span class="status-badge development">In Development</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$150K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$8.0M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$400K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Launch Date</div>
+                            <div class="feature-metric-value">Mar 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="development">
+                    <div class="feature-header">
+                        <div class="feature-name">Fantasy Gaming (Beta)</div>
+                        <span class="status-badge development">In Development</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$75K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$12.5M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$500K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Multiple</div>
+                            <div class="feature-metric-value">25x ARR</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="planned">
+                    <div class="feature-header">
+                        <div class="feature-name">Live Streaming MVP</div>
+                        <span class="status-badge planned">Planned</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$100K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$4.5M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$300K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Launch Date</div>
+                            <div class="feature-metric-value">Q2 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="planned">
+                    <div class="feature-header">
+                        <div class="feature-name">Bloodstock Exchange</div>
+                        <span class="status-badge planned">Planned</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$200K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$90.0M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$3.0M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Launch Date</div>
+                            <div class="feature-metric-value">Q4 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card" data-status="planned">
+                    <div class="feature-header">
+                        <div class="feature-name">Banking-as-a-Service</div>
+                        <span class="status-badge planned">Planned</span>
+                    </div>
+                    <div class="feature-metrics">
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Build Cost</div>
+                            <div class="feature-metric-value">$150K</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Val. Add</div>
+                            <div class="feature-metric-value">+$22.5M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Y1 Revenue</div>
+                            <div class="feature-metric-value">$1.5M</div>
+                        </div>
+                        <div class="feature-metric">
+                            <div class="feature-metric-label">Launch Date</div>
+                            <div class="feature-metric-value">Q4 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Breakdown -->
+        <div class="revenue-section">
+            <div class="revenue-chart">
+                <div class="chart-header">
+                    <h2 class="chart-title">Revenue Waterfall</h2>
+                    <p class="chart-subtitle">Current ARR breakdown by revenue stream</p>
+                </div>
+
+                <div class="revenue-bars">
+                    <div class="revenue-bar-item">
+                        <div class="revenue-bar-header">
+                            <span class="revenue-bar-name">RPI API Access</span>
+                            <span class="revenue-bar-value">$50K</span>
+                        </div>
+                        <div class="revenue-bar-track">
+                            <div class="revenue-bar-fill" style="width: 33.3%;">33%</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-bar-item">
+                        <div class="revenue-bar-header">
+                            <span class="revenue-bar-name">Premium Subscriptions</span>
+                            <span class="revenue-bar-value">$100K</span>
+                        </div>
+                        <div class="revenue-bar-track">
+                            <div class="revenue-bar-fill" style="width: 66.7%;">67%</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-bar-item">
+                        <div class="revenue-bar-header">
+                            <span class="revenue-bar-name">Event Software (Projected)</span>
+                            <span class="revenue-bar-value">$400K</span>
+                        </div>
+                        <div class="revenue-bar-track">
+                            <div class="revenue-bar-fill" style="width: 0%; opacity: 0.3;">Launch: Mar 2026</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-bar-item">
+                        <div class="revenue-bar-header">
+                            <span class="revenue-bar-name">Fantasy Gaming (Projected)</span>
+                            <span class="revenue-bar-value">$500K</span>
+                        </div>
+                        <div class="revenue-bar-track">
+                            <div class="revenue-bar-fill" style="width: 0%; opacity: 0.3;">Launch: Jun 2026</div>
+                        </div>
+                    </div>
+
+                    <div class="revenue-bar-item">
+                        <div class="revenue-bar-header">
+                            <span class="revenue-bar-name">Live Streaming (Projected)</span>
+                            <span class="revenue-bar-value">$300K</span>
+                        </div>
+                        <div class="revenue-bar-track">
+                            <div class="revenue-bar-fill" style="width: 0%; opacity: 0.3;">Launch: Q2 2026</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 600; color: var(--white);">Total ARR (Current)</span>
+                        <span style="font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; color: var(--gold);">$150K</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                        <span style="font-weight: 600; color: var(--slate-light);">Projected ARR (Series A)</span>
+                        <span style="font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--emerald);">$1.95M</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-round">
+                <h3 class="next-round-title">Next Round Projections</h3>
+
+                <div class="next-round-stats">
+                    <div class="round-stat">
+                        <div class="round-stat-label">Series A Target</div>
+                        <div class="round-stat-value">$50.0M</div>
+                    </div>
+
+                    <div class="round-stat">
+                        <div class="round-stat-label">Equity to Sell</div>
+                        <div class="round-stat-value">9%</div>
+                    </div>
+
+                    <div class="round-stat">
+                        <div class="round-stat-label">Estimated Raise</div>
+                        <div class="round-stat-value">$4.5M</div>
+                    </div>
+
+                    <div class="round-stat">
+                        <div class="round-stat-label">Your 1% Value</div>
+                        <div class="round-stat-value highlight">$2.5M</div>
+                    </div>
+
+                    <div class="round-stat">
+                        <div class="round-stat-label">Your Projected ROI</div>
+                        <div class="round-stat-value highlight">5x</div>
+                    </div>
+                </div>
+
+                <div class="countdown">
+                    <div class="countdown-label">Estimated Timeline</div>
+                    <div class="countdown-value">~5 months</div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Legendary Stakes Investor Hub © 2026 | Last Updated: January 23, 2026 | <a href="#" style="color: var(--gold); text-decoration: none;">Download Full Report</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const featureCards = document.querySelectorAll('.feature-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                const filter = button.getAttribute('data-filter');
+
+                featureCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = 'block';
+                    } else {
+                        const status = card.getAttribute('data-status');
+                        card.style.display = status === filter ? 'block' : 'none';
+                    }
+                });
+            });
+        });
+
+        // Simulate real-time updates (for demo purposes)
+        function updateMetrics() {
+            // Simulate minor fluctuations in metrics
+            const currentVal = document.querySelector('.metric-value.gold');
+            const currentValNum = parseFloat(currentVal.textContent.replace('$', '').replace('M', ''));
+            const newVal = (currentValNum + (Math.random() * 0.2 - 0.1)).toFixed(1);
+            // Uncommenting would show live updates:
+            // currentVal.textContent = `$${newVal}M`;
+        }
+
+        // Update every 30 seconds (disabled for static demo)
+        // setInterval(updateMetrics, 30000);
+
+        // Animate revenue bars on load
+        window.addEventListener('load', () => {
+            const fills = document.querySelectorAll('.revenue-bar-fill');
+            fills.forEach((fill, index) => {
+                setTimeout(() => {
+                    const width = fill.style.width;
+                    fill.style.width = '0%';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 50);
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
