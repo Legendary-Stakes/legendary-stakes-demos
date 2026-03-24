@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legendary Stakes - Traction Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1" integrity="sha384-jb8JQMbMoBUzgWatfe6COACi2ljcDdZQ2OxczGA3bGNeWe+6DChMTBJemed7ZnvJ" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --navy: #1B3A5C;
+            --navy-light: #2A5580;
+            --gold: #D4A024;
+            --gold-light: #E8C95A;
+            --bg: #F4F5F7;
+            --card: #FFFFFF;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #E0E0E0;
+            --green: #2E7D32;
+            --green-bg: #E8F5E9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            border-radius: 16px;
+            padding: 32px 40px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(27,58,92,0.15);
+        }
+        .header-left h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header-left .subtitle {
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 4px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .header-right {
+            text-align: right;
+        }
+        .header-right .label {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header-right .value {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .confidential {
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+        /* Season Toggle */
+        .season-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .season-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .season-btn.active {
+            border-color: var(--navy);
+            background: var(--navy);
+            color: white;
+        }
+        .season-btn:hover:not(.active) {
+            border-color: var(--gold);
+            color: var(--navy);
+        }
+        /* KPI Cards */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--gold);
+        }
+        .kpi-card.highlight::before {
+            background: var(--navy);
+        }
+        .kpi-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.1;
+        }
+        .kpi-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-bg);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .kpi-context {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 6px;
+        }
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        .chart-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+        }
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+        .chart-subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+        /* Revenue callout */
+        .revenue-banner {
+            background: linear-gradient(135deg, #F8F6F1 0%, #FFF9E6 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .revenue-banner .rev-block {
+            text-align: center;
+        }
+        .revenue-banner .rev-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .revenue-banner .rev-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .revenue-banner .rev-note {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        /* Detail table */
+        .table-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead th {
+            background: var(--navy);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        thead th:first-child { border-radius: 8px 0 0 0; }
+        thead th:last-child { border-radius: 0 8px 0 0; }
+        thead th:hover { background: var(--navy-light); }
+        tbody td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        tbody tr:nth-child(even) { background: #F9FAFB; }
+        tbody tr:hover { background: #F0F4F8; }
+        .num { text-align: right; font-variant-numeric: tabular-nums; }
+        .pos { color: var(--green); font-weight: 600; }
+        .neg { color: #C62828; font-weight: 600; }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .kpis { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .revenue-banner { flex-direction: column; }
+        }
+        @media print {
+            body { background: white; }
+            .season-toggle { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <h1>Legendary Stakes</h1>
+            <div class="subtitle">Traction Dashboard</div>
+        </div>
+        <div class="header-right">
+            <div class="label">Data as of</div>
+            <div class="value">March 2026</div>
+            <div class="confidential">Confidential</div>
+        </div>
+    </div>
+
+    <!-- Season Toggle -->
+    <div class="season-toggle">
+        <button class="season-btn active" onclick="setSeason('all')">All Time</button>
+        <button class="season-btn" onclick="setSeason('2024')">2024 Season</button>
+        <button class="season-btn" onclick="setSeason('2025')">2025 Season</button>
+        <button class="season-btn" onclick="setSeason('2026')">2026 YTD</button>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpis">
+        <div class="kpi-card highlight">
+            <div class="kpi-label">Total Users</div>
+            <div class="kpi-value" id="kpi-users">1,305</div>
+            <div class="kpi-change" id="kpi-users-change">&#9650; 265% from launch</div>
+            <div class="kpi-context">Platform registrations</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Enrolled Sires</div>
+            <div class="kpi-value" id="kpi-sires">477</div>
+            <div class="kpi-change" id="kpi-sires-change">&#9650; Lifetime commitments</div>
+            <div class="kpi-context">54,532 eligible offspring</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Competitors</div>
+            <div class="kpi-value" id="kpi-competitors">490</div>
+            <div class="kpi-change" id="kpi-comp-change">&#9650; 268% from launch</div>
+            <div class="kpi-context">Horses registered for entry</div>
+        </div>
+        <div class="kpi-card highlight">
+            <div class="kpi-label">Website Traffic</div>
+            <div class="kpi-value">33K</div>
+            <div class="kpi-change">&#9650; 617% YoY</div>
+            <div class="kpi-context">Monthly visitors (Feb 2026 vs Feb 2025)</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Social Media Followers</div>
+            <div class="kpi-value" id="kpi-fb">15,727</div>
+            <div class="kpi-change" id="kpi-fb-change">&#9650; 167% YoY</div>
+            <div class="kpi-context">Organic, zero ad spend</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Email Subscribers</div>
+            <div class="kpi-value">5,850</div>
+            <div class="kpi-change">&#9650; 18K in nurture pipeline</div>
+            <div class="kpi-context">Targeting 12K+ subscribers by summer</div>
+        </div>
+        <div class="kpi-card highlight">
+            <div class="kpi-label">Revenue (2024-2025)</div>
+            <div class="kpi-value" id="kpi-revenue">$1M+</div>
+            <div class="kpi-change" id="kpi-rev-change">&#9650; Pre-platform launch</div>
+            <div class="kpi-context">Entry fees + sire enrollments + discipline unlocks</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Competition Entries</div>
+            <div class="kpi-value" id="kpi-entries">567</div>
+            <div class="kpi-change" id="kpi-entries-change">&#9650; All-time total</div>
+            <div class="kpi-context">Across 2024, 2025, and 2026 YTD</div>
+        </div>
+    </div>
+
+    <!-- Revenue Banner -->
+    <div class="revenue-banner">
+        <div class="rev-block">
+            <div class="rev-label">2024 Season Purse</div>
+            <div class="rev-value">$275,178</div>
+            <div class="rev-note">$155,178 entry-fee driven + $120K first-time discipline bonuses (12 winners)</div>
+        </div>
+        <div class="rev-block">
+            <div class="rev-label">2025 Season Purse</div>
+            <div class="rev-value">$199,363</div>
+            <div class="rev-note">$189,363 entry-fee driven + $10K first-time discipline bonus (1 winner)</div>
+        </div>
+        <div class="rev-block">
+            <div class="rev-label">2026 YTD Purse</div>
+            <div class="rev-value">$8,000</div>
+            <div class="rev-note">32 entries, season just started</div>
+        </div>
+        <div class="rev-block">
+            <div class="rev-label">Total Revenue (All Sources)</div>
+            <div class="rev-value" style="color: var(--gold);">$1M+</div>
+            <div class="rev-note">Entry fees + sire enrollments + discipline unlocks</div>
+        </div>
+    </div>
+
+    <!-- Organic Growth Callout -->
+    <div class="revenue-banner" style="border-color: var(--navy); background: linear-gradient(135deg, #F0F4F8 0%, #E8EDF2 100%);">
+        <div class="rev-block">
+            <div class="rev-label">Entry-Fee Purse Growth (Organic)</div>
+            <div class="rev-value" style="color: var(--green);">+22%</div>
+            <div class="rev-note">$155K (2024) → $189K (2025), excluding one-time discipline bonuses</div>
+        </div>
+        <div class="rev-block">
+            <div class="rev-label">Entry Volume Growth</div>
+            <div class="rev-value" style="color: var(--green);">+102%</div>
+            <div class="rev-note">177 entries (2024) → 358 entries (2025)</div>
+        </div>
+        <div class="rev-block">
+            <div class="rev-label">Why This Matters</div>
+            <div class="rev-note" style="max-width: 300px; font-size: 13px;">The 2024 season included 12 one-time first-discipline bonus winners ($10K each = $120K). Only 1 remained in 2025 ($10K). Despite that $110K headwind disappearing, total purse held strong because entry volume doubled. The underlying engine is accelerating.</div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="charts-grid">
+        <div class="chart-card full-width">
+            <div class="chart-title">Cumulative User Growth</div>
+            <div class="chart-subtitle">Total registered users since launch (April 2024)</div>
+            <div class="chart-container"><canvas id="userChart"></canvas></div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">New Competitors by Month</div>
+            <div class="chart-subtitle">Horses registering for competition entry each month</div>
+            <div class="chart-container"><canvas id="compChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Facebook Audience</div>
+            <div class="chart-subtitle">Organic follower growth (zero ad spend)</div>
+            <div class="chart-container"><canvas id="fbChart"></canvas></div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-title">Monthly Entry Volume</div>
+            <div class="chart-subtitle">Competition entries by month</div>
+            <div class="chart-container"><canvas id="entriesChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Season Purse: Entry-Fee Driven vs. Bonuses</div>
+            <div class="chart-subtitle">Isolating organic growth from one-time first-discipline bonuses</div>
+            <div class="chart-container"><canvas id="purseChart"></canvas></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Legendary Stakes &middot; Confidential Investor Material &middot; March 2026<br>
+        Contact: shane@legendarystakes.com
+    </div>
+</div>
+
+<script>
+// ============ EMBEDDED DATA ============
+
+const monthlyData = [
+    { month:"Apr 2024", season:"2024", users:357, userGrowth:357, stallions:462, competitors:133, compGrowth:133, entries:34, purse:8500 },
+    { month:"May 2024", season:"2024", users:385, userGrowth:11, stallions:463, competitors:164, compGrowth:3, entries:51, purse:12250 },
+    { month:"Jun 2024", season:"2024", users:406, userGrowth:21, stallions:464, competitors:166, compGrowth:2, entries:68, purse:15250 },
+    { month:"Jul 2024", season:"2024", users:427, userGrowth:21, stallions:464, competitors:167, compGrowth:1, entries:96, purse:19500 },
+    { month:"Aug 2024", season:"2024", users:460, userGrowth:33, stallions:464, competitors:173, compGrowth:6, entries:120, purse:23250 },
+    { month:"Sep 2024", season:"2024", users:484, userGrowth:24, stallions:464, competitors:184, compGrowth:11, entries:128, purse:25000 },
+    { month:"Oct 2024", season:"2024", users:520, userGrowth:36, stallions:464, competitors:191, compGrowth:7, entries:138, purse:26250 },
+    { month:"Nov 2024", season:"2024", users:549, userGrowth:29, stallions:464, competitors:209, compGrowth:18, entries:156, purse:29500 },
+    { month:"Dec 2024", season:"2024", users:621, userGrowth:72, stallions:467, competitors:242, compGrowth:33, entries:177, purse:32250 },
+    { month:"Jan 2025", season:"2025", users:714, userGrowth:93, stallions:468, competitors:270, compGrowth:28, entries:24, purse:4750 },
+    { month:"Feb 2025", season:"2025", users:846, userGrowth:132, stallions:459, competitors:321, compGrowth:51, entries:58, purse:9750 },
+    { month:"Mar 2025", season:"2025", users:964, userGrowth:118, stallions:459, competitors:345, compGrowth:24, entries:76, purse:12000 },
+    { month:"Apr 2025", season:"2025", users:1006, userGrowth:42, stallions:459, competitors:358, compGrowth:13, entries:90, purse:14250 },
+    { month:"May 2025", season:"2025", users:1034, userGrowth:28, stallions:459, competitors:364, compGrowth:6, entries:104, purse:17000 },
+    { month:"Jun 2025", season:"2025", users:1085, userGrowth:51, stallions:459, competitors:375, compGrowth:11, entries:168, purse:21000 },
+    { month:"Jul 2025", season:"2025", users:1100, userGrowth:15, stallions:459, competitors:387, compGrowth:12, entries:188, purse:27000 },
+    { month:"Aug 2025", season:"2025", users:1138, userGrowth:38, stallions:460, competitors:416, compGrowth:29, entries:245, purse:34000 },
+    { month:"Sep 2025", season:"2025", users:1161, userGrowth:23, stallions:460, competitors:427, compGrowth:11, entries:265, purse:36750 },
+    { month:"Oct 2025", season:"2025", users:1186, userGrowth:25, stallions:460, competitors:437, compGrowth:10, entries:274, purse:38250 },
+    { month:"Nov 2025", season:"2025", users:1210, userGrowth:24, stallions:461, competitors:449, compGrowth:12, entries:278, purse:39250 },
+    { month:"Dec 2025", season:"2025", users:1226, userGrowth:16, stallions:462, competitors:453, compGrowth:4, entries:358, purse:39250 },
+    { month:"Jan 2026", season:"2026", users:1272, userGrowth:46, stallions:462, competitors:473, compGrowth:20, entries:5, purse:1000 },
+    { month:"Feb 2026", season:"2026", users:1297, userGrowth:25, stallions:462, competitors:487, compGrowth:14, entries:20, purse:3500 },
+    { month:"Mar 2026", season:"2026", users:1305, userGrowth:8, stallions:477, competitors:490, compGrowth:3, entries:32, purse:8000 },
+];
+
+const fbData = [
+    { month:"Jan 2025", followers:4500 },
+    { month:"Feb 2025", followers:5400 },
+    { month:"Mar 2025", followers:5900 },
+    { month:"Apr 2025", followers:6900 },
+    { month:"May 2025", followers:7591 },
+    { month:"Jun 2025", followers:7956 },
+    { month:"Jul 2025", followers:8152 },
+    { month:"Aug 2025", followers:8274 },
+    { month:"Sep 2025", followers:8386 },
+    { month:"Oct 2025", followers:9821 },
+    { month:"Nov 2025", followers:11402 },
+    { month:"Dec 2025", followers:12530 },
+    { month:"Jan 2026", followers:13970 },
+    { month:"Feb 2026", followers:15388 },
+    { month:"Mar 2026", followers:15727 },
+];
+
+// ============ CHART SETUP ============
+
+const NAVY = '#1B3A5C';
+const NAVY_40 = 'rgba(27,58,92,0.15)';
+const GOLD = '#D4A024';
+const GOLD_40 = 'rgba(212,160,36,0.15)';
+const GREEN = '#2E7D32';
+
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#666';
+
+let currentSeason = 'all';
+let userChart, compChart, fbChartObj, entriesChart, purseChart;
+
+function getFiltered() {
+    if (currentSeason === 'all') return monthlyData;
+    return monthlyData.filter(d => d.season === currentSeason);
+}
+
+function fmt(n) { return n.toLocaleString('en-US'); }
+function fmtK(n) { return n >= 1000 ? (n/1000).toFixed(0) + 'K' : fmt(n); }
+
+function setSeason(s) {
+    currentSeason = s;
+    document.querySelectorAll('.season-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    updateAll();
+}
+
+function updateKPIs() {
+    const data = getFiltered();
+    const last = data[data.length - 1];
+    const first = data[0];
+
+    document.getElementById('kpi-users').textContent = fmt(last.users);
+    const userPctGrowth = ((last.users - first.users) / Math.max(first.users, 1) * 100).toFixed(0);
+    document.getElementById('kpi-users-change').innerHTML = `&#9650; ${userPctGrowth}% growth`;
+
+    document.getElementById('kpi-competitors').textContent = fmt(last.competitors);
+    const compPctGrowth = ((last.competitors - first.competitors) / Math.max(first.competitors, 1) * 100).toFixed(0);
+    document.getElementById('kpi-comp-change').innerHTML = `&#9650; ${compPctGrowth}% growth`;
+
+    // Entries: sum for the season
+    const totalEntries = currentSeason === 'all'
+        ? 177 + 358 + 32  // 2024 final + 2025 final + 2026 YTD
+        : data[data.length-1].entries;
+    document.getElementById('kpi-entries').textContent = fmt(totalEntries);
+    const seasonLabel = currentSeason === 'all' ? 'All-time total' : currentSeason + ' season';
+    document.getElementById('kpi-entries-change').innerHTML = `&#9650; ${seasonLabel}`;
+}
+
+function buildUserChart() {
+    const data = getFiltered();
+    const ctx = document.getElementById('userChart').getContext('2d');
+    if (userChart) userChart.destroy();
+    userChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.month),
+            datasets: [{
+                label: 'Total Users',
+                data: data.map(d => d.users),
+                borderColor: NAVY,
+                backgroundColor: NAVY_40,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                borderWidth: 2.5,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Total Users' },
+                    ticks: { callback: v => fmt(v) } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14 } }
+            }
+        }
+    });
+}
+
+function buildCompChart() {
+    const data = getFiltered();
+    const ctx = document.getElementById('compChart').getContext('2d');
+    if (compChart) compChart.destroy();
+
+    // Show new competitors added each month (bar chart)
+    const newComps = data.map((d, i) => {
+        if (i === 0) return d.competitors;
+        if (d.season !== data[i-1].season && currentSeason !== 'all') return d.competitors;
+        return Math.max(0, d.competitors - data[i-1].competitors);
+    });
+
+    compChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.month),
+            datasets: [{
+                label: 'New Competitors',
+                data: newComps,
+                backgroundColor: data.map(d =>
+                    d.season === '2024' ? NAVY :
+                    d.season === '2025' ? GOLD :
+                    GREEN
+                ),
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'New Horses' } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 8 } }
+            }
+        }
+    });
+}
+
+function buildFBChart() {
+    const ctx = document.getElementById('fbChart').getContext('2d');
+    if (fbChartObj) fbChartObj.destroy();
+    // FB data doesn't filter by season, always show full
+    const data = fbData;
+    fbChartObj = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.map(d => d.month),
+            datasets: [{
+                label: 'Facebook Followers',
+                data: data.map(d => d.followers),
+                borderColor: GOLD,
+                backgroundColor: GOLD_40,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                borderWidth: 2.5,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: false, ticks: { callback: v => fmtK(v) } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 8 } }
+            }
+        }
+    });
+}
+
+function buildEntriesChart() {
+    const data = getFiltered();
+    const ctx = document.getElementById('entriesChart').getContext('2d');
+    if (entriesChart) entriesChart.destroy();
+
+    // Calculate per-month entries (difference from previous)
+    const monthlyEntries = data.map((d, i) => {
+        if (i === 0) return d.entries;
+        // If season changed, entries reset
+        if (d.season !== data[i-1].season) return d.entries;
+        return Math.max(0, d.entries - data[i-1].entries);
+    });
+
+    entriesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(d => d.month),
+            datasets: [{
+                label: 'New Entries',
+                data: monthlyEntries,
+                backgroundColor: data.map(d =>
+                    d.season === '2024' ? NAVY :
+                    d.season === '2025' ? GOLD :
+                    GREEN
+                ),
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, title: { display: true, text: 'Entries' } },
+                x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 8 } }
+            }
+        }
+    });
+}
+
+function buildPurseChart() {
+    const ctx = document.getElementById('purseChart').getContext('2d');
+    if (purseChart) purseChart.destroy();
+    // Season-level comparison: organic entry-fee purse vs bonuses
+    const seasonData = [
+        { label: '2024 Season', organic: 155178, bonus: 120000, entries: 177 },
+        { label: '2025 Season', organic: 189363, bonus: 10000, entries: 358 },
+        { label: '2026 YTD', organic: 8000, bonus: 0, entries: 32 },
+    ];
+    purseChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: seasonData.map(d => d.label),
+            datasets: [{
+                label: 'Entry-Fee Driven Purse',
+                data: seasonData.map(d => d.organic),
+                backgroundColor: NAVY,
+                borderRadius: 4,
+            }, {
+                label: 'First-Discipline Bonuses',
+                data: seasonData.map(d => d.bonus),
+                backgroundColor: GOLD,
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { usePointStyle: true, padding: 16 } },
+                tooltip: {
+                    callbacks: {
+                        afterBody: function(context) {
+                            const idx = context[0].dataIndex;
+                            return 'Entries: ' + fmt(seasonData[idx].entries);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, stacked: true, ticks: { callback: v => '$' + fmtK(v) } },
+                x: { stacked: true }
+            }
+        }
+    });
+}
+
+function updateAll() {
+    updateKPIs();
+    buildUserChart();
+    buildCompChart();
+    buildFBChart();
+    buildEntriesChart();
+    buildPurseChart();
+}
+
+// Initial render
+updateAll();
+</script>
+</body>
+</html>
