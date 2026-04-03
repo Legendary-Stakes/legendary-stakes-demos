@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Horse Industry Infrastructure Paradox</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f7f5f0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 780px;
+    padding: 40px 44px 44px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -0.3px;
+  }
+
+  .header .subtitle {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  .divider-line {
+    height: 2px;
+    background: linear-gradient(to right, #E85D00, #C9A84C, #E85D00);
+    margin: 18px 0 24px;
+    border-radius: 2px;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 56px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+
+  .col-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .col-header .label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 4px;
+  }
+
+  .col-header h2 {
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: #111;
+  }
+
+  .col-header .tam {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 3px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  .col-header .tam span {
+    color: #E85D00;
+    font-weight: 700;
+  }
+
+  .left .col-header h2 { color: #444; }
+  .right .col-header h2 { color: #111; }
+
+  .solution-card {
+    border: 1.5px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: #fafafa;
+  }
+
+  .solution-card .name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .solution-card .detail {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .solution-card .detail strong {
+    color: #555;
+    font-weight: 700;
+  }
+
+  .ls-card {
+    border: 2.5px solid #E85D00;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    background: #111;
+    color: #fff;
+  }
+
+  .ls-card .ls-name {
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    color: #E85D00;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .ls-card .ls-tagline {
+    font-size: 11px;
+    color: #C9A84C;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ls-card .ls-stat {
+    font-size: 11.5px;
+    color: #ddd;
+    line-height: 1.8;
+  }
+
+  .ls-card .ls-stat strong {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  .vs-col {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 72px;
+  }
+
+  .vs-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Arial Black', 'Arial', sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: #E85D00;
+    flex-shrink: 0;
+  }
+
+  .bottom-note {
+    text-align: center;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  .bottom-note .insight {
+    font-size: 13px;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .bottom-note .insight span {
+    color: #E85D00;
+    font-weight: 800;
+  }
+
+  .bottom-note .byline {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #efefef;
+    color: #888;
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin: 2px 2px 0 0;
+    letter-spacing: 0.3px;
+  }
+
+  .tag-gold {
+    background: rgba(201,168,76,0.18);
+    color: #C9A84C;
+  }
+
+  .tag-orange {
+    background: rgba(232,93,0,0.12);
+    color: #E85D00;
+  }
+
+  .arrow-label {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .left .arrow-label { color: #bbb; }
+  .right .arrow-label { color: #E85D00; }
+
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>The Horse Industry Infrastructure Paradox</h1>
+    <p class="subtitle">The same bet playing out in a $80B+ market that most investors haven't looked at yet.</p>
+  </div>
+  <div class="divider-line"></div>
+  <div class="columns">
+    <div class="left">
+      <div class="col-header">
+        <div class="label">Point Solutions</div>
+        <h2>The Tools</h2>
+        <div class="tam">Fragmented TAM: <span>Small &amp; Siloed</span></div>
+      </div>
+      <div class="arrow-label">↓ &nbsp; Serving the existing industry &nbsp; ↓</div>
+      <div class="solution-card">
+        <div class="name">Association Software</div>
+        <div class="detail">AQHA, NCHA, NRHA each running separate databases<br><strong>No interoperability</strong> · Data trapped in silos<br><span class="tag">Registration</span><span class="tag">Pedigree</span></div>
+      </div>
+      <div class="solution-card">
+        <div class="name">Event Management Apps</div>
+        <div class="detail">Hundreds of shows using disconnected platforms<br><strong>No unified results layer</strong> · Manual entry<br><span class="tag">Show Software</span><span class="tag">Entries</span></div>
+      </div>
+      <div class="solution-card">
+        <div class="name">Breeding &amp; Sales Platforms</div>
+        <div class="detail">Static listings, no performance-to-breeding loop<br><strong>Stallion ROI invisible</strong> to the market<br><span class="tag">Studbooks</span><span class="tag">Auction Sites</span></div>
+      </div>
+      <div class="solution-card">
+        <div class="name">Wagering &amp; Fantasy</div>
+        <div class="detail">Isolated products with no data infrastructure<br><strong>Engagement stops</strong> at the arena gate<br><span class="tag">Rodeo Fantasy</span><span class="tag">Handicapping</span></div>
+      </div>
+    </div>
+    <div class="vs-col"><div class="vs-circle">VS</div></div>
+    <div class="right">
+      <div class="col-header">
+        <div class="label">Native Infrastructure</div>
+        <h2>The OS</h2>
+        <div class="tam">Total Addressable Market: <span>$80B+ Ecosystem</span></div>
+      </div>
+      <div class="arrow-label">↓ &nbsp; Replacing the infrastructure layer &nbsp; ↓</div>
+      <div class="ls-card">
+        <div class="ls-name">Legendary Stakes</div>
+        <div class="ls-tagline">Operating System for Western Performance Horse Sport</div>
+        <div class="ls-stat"><strong>$1M+ revenue</strong> · ~0.1% market penetration<br><strong>477 enrolled sires</strong> · 54,532 eligible horses<br><strong>700+ annual events</strong> live on the OS<br><strong>$475K+ paid out</strong> through the platform</div>
+      </div>
+      <div class="ls-card" style="border-color: #C9A84C; margin-top: 4px;">
+        <div class="ls-name" style="color: #C9A84C; font-size: 13px;">What the OS connects:</div>
+        <div class="ls-stat" style="margin-top: 6px;"><span class="tag tag-gold">Events</span><span class="tag tag-gold">Stallion Stakes</span><span class="tag tag-gold">Performance Data</span><span class="tag tag-gold">Wagering</span><span class="tag tag-gold">Breeding Intelligence</span><span class="tag tag-gold">Fan Engagement</span><span class="tag tag-gold">Media</span><span class="tag tag-orange">Rodeo</span><span class="tag tag-orange">Cutting</span><span class="tag tag-orange">Reining</span></div>
+      </div>
+      <div class="ls-card" style="border-color: #333; background: #1a1a1a;">
+        <div class="ls-name" style="color: #fff; font-size: 12px;">The network effect the tools can't build:</div>
+        <div class="ls-stat" style="margin-top: 4px; color: #aaa;">Every horse enrolled → more data<br>More data → better stallion intelligence<br>Better intelligence → more breeders, more events<br><strong style="color: #E85D00;">The flywheel compounds. The tools don't.</strong></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-note">
+    <div class="insight">In legal, VCs funding tools (Harvey, Legora) are betting on a <span>$36B market.</span>&nbsp; VCs funding AI-native firms (Crosby, Lawhive, Norm Law) are betting on a <span>$1.1 Trillion market.</span>&nbsp; Same VCs — Sequoia, Bain Capital, Blackstone — are on both sides.&nbsp; The author calls it <span>4D chess.</span></div>
+    <div class="insight" style="margin-top: 12px; font-size: 12px; color: #555;">In horse sports, the tools already exist.&nbsp; The native infrastructure layer does not — except one.&nbsp; $12B core market.&nbsp; $80B+ full ecosystem.&nbsp; <span>Legendary Stakes is the 4D chess move.</span></div>
+    <div class="byline">legendarystakes.com &nbsp;·&nbsp; Seed Round Open</div>
+  </div>
+</div>
+</body>
+</html>
