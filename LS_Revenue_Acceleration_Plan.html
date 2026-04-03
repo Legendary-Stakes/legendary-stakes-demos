@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legendary Stakes — Revenue Acceleration Plan</title>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0C96A;
+    --dark: #0D0D0D;
+    --dark2: #161616;
+    --dark3: #1E1E1E;
+    --dark4: #272727;
+    --text: #F0EDE6;
+    --text-muted: #8A8A8A;
+    --red: #D94F4F;
+    --green: #4CAF7D;
+    --blue: #4A90D9;
+    --phase1: #C9A84C;
+    --phase2: #4CAF7D;
+    --phase3: #4A90D9;
+    --phase4: #A764C8;
+    --phase5: #D94F4F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0D0D0D 0%, #1a1400 50%, #0D0D0D 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 48px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: var(--gold); }
+  .header-sub {
+    font-family: 'Arial', sans-serif;
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* FLYWHEEL */
+  .flywheel-section {
+    background: var(--dark2);
+    padding: 48px 24px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .section-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: clamp(20px, 3vw, 30px);
+    text-align: center;
+    color: #fff;
+    margin-bottom: 36px;
+  }
+
+  .flywheel-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .flywheel-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 130px;
+  }
+  .flywheel-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+    background: rgba(201,168,76,0.08);
+  }
+  .flywheel-item span {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .flywheel-arrow {
+    font-size: 20px;
+    color: var(--gold);
+    padding: 0 4px;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+  }
+  .flywheel-cta {
+    text-align: center;
+    margin-top: 24px;
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .flywheel-cta strong { color: var(--gold); font-style: normal; }
+
+  /* MAIN CONTENT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+
+  /* PHASE TIMELINE */
+  .timeline-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .timeline-title {
+    font-size: clamp(20px, 3vw, 28px);
+    color: #fff;
+    margin-bottom: 36px;
+  }
+
+  .phase-card {
+    background: var(--dark3);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    border: 1px solid #2a2a2a;
+    transition: border-color 0.2s;
+  }
+  .phase-card:hover { border-color: #3a3a3a; }
+
+  .phase-header {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+  }
+  .phase-accent {
+    width: 6px;
+    flex-shrink: 0;
+    border-radius: 0;
+  }
+  .phase-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    flex: 1;
+    cursor: pointer;
+  }
+  .phase-number {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  .phase-title-block { flex: 1; }
+  .phase-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .phase-timing {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .phase-goal-pill {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+
+  .phase-body {
+    padding: 0 24px 24px 30px;
+  }
+  .phase-description {
+    font-size: 14px;
+    color: #C0BAB0;
+    line-height: 1.75;
+    margin-bottom: 20px;
+    border-left: 2px solid #2a2a2a;
+    padding-left: 16px;
+  }
+
+  /* Metrics Row */
+  .metrics-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .metric-chip {
+    background: var(--dark4);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .metric-value {
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold-light);
+    display: block;
+    line-height: 1.1;
+  }
+  .metric-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Actions */
+  .actions-label {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .action-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .action-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    color: #B0ABA2;
+    line-height: 1.5;
+  }
+  .action-list li .bullet {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #000;
+  }
+  .action-list li strong { color: #E0DBD2; }
+
+  /* PRIORITY LIST */
+  .priority-section {
+    background: var(--dark2);
+    border-top: 3px solid var(--gold);
+    padding: 48px 24px;
+    margin-top: 0;
+  }
+  .priority-inner { max-width: 1100px; margin: 0 auto; }
+  .priority-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .priority-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--dark3);
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 16px 20px;
+    transition: background 0.2s;
+  }
+  .priority-row:hover { background: var(--dark4); }
+  .priority-num {
+    font-family: 'Arial', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    opacity: 0.4;
+    width: 36px;
+    flex-shrink: 0;
+    text-align: center;
+    line-height: 1;
+  }
+  .priority-content { flex: 1; }
+  .priority-content strong {
+    display: block;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .priority-content span {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .priority-badge {
+    font-family: 'Arial', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .badge-now { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+  .badge-soon { background: rgba(76,175,125,0.15); color: #4CAF7D; border: 1px solid rgba(76,175,125,0.3); }
+  .badge-next { background: rgba(74,144,217,0.15); color: #4A90D9; border: 1px solid rgba(74,144,217,0.3); }
+
+  /* FOOTER */
+  .footer {
+    background: var(--dark);
+    border-top: 1px solid #1e1e1e;
+    padding: 24px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .footer span { color: var(--gold); opacity: 0.6; }
+
+  /* Phase color assignments */
+  .p1 { color: var(--phase1); }
+  .p2 { color: var(--phase2); }
+  .p3 { color: var(--phase3); }
+  .p4 { color: var(--phase4); }
+  .p5 { color: var(--phase5); }
+  .bg-p1 { background: var(--phase1); }
+  .bg-p2 { background: var(--phase2); }
+  .bg-p3 { background: var(--phase3); }
+  .bg-p4 { background: var(--phase4); }
+  .bg-p5 { background: var(--phase5); }
+  .pill-p1 { background: rgba(201,168,76,0.15); color: var(--phase1); border: 1px solid rgba(201,168,76,0.3); }
+  .pill-p2 { background: rgba(76,175,125,0.12); color: var(--phase2); border: 1px solid rgba(76,175,125,0.3); }
+  .pill-p3 { background: rgba(74,144,217,0.12); color: var(--phase3); border: 1px solid rgba(74,144,217,0.3); }
+  .pill-p4 { background: rgba(167,100,200,0.12); color: var(--phase4); border: 1px solid rgba(167,100,200,0.3); }
+  .pill-p5 { background: rgba(217,79,79,0.12); color: var(--phase5); border: 1px solid rgba(217,79,79,0.3); }
+
+  @media (max-width: 600px) {
+    .flywheel-steps { gap: 4px; }
+    .flywheel-item { width: 80px; }
+    .flywheel-icon { width: 48px; height: 48px; font-size: 18px; }
+    .flywheel-arrow { display: none; }
+    .metrics-row { flex-direction: column; }
+    .phase-goal-pill { display: none; }
+    .phase-header-inner { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-eyebrow">Strategic Plan · April 2026</div>
+  <h1>Legendary Stakes<br><span>Revenue Acceleration</span></h1>
+  <p class="header-sub">The fastest path to revenue — sequenced by flywheel logic.  Every phase unlocks the next.</p>
+</div>
+
+<!-- FLYWHEEL -->
+<div class="flywheel-section">
+  <div class="section-label">The Engine</div>
+  <h2 class="section-title">The Flywheel — Order Matters</h2>
+  <div class="flywheel-steps">
+    <div class="flywheel-item">
+      <div class="flywheel-icon">📊</div>
+      <span>Dashboards<br>Go Live</span>
+    </div>
+    <div class="flywheel-arrow">→</div>
+    <div class="flywheel-item">
+      <div class="flywheel-icon">😤</div>
+      <span>FOMO<br>Activates</span>
+    </div>
+    <div class="flywheel-arrow">→</div>
+    <div class="flywheel-item">
+      <div class="flywheel-icon">🐴</div>
+      <span>Sires<br>Enroll</span>
+    </div>
+    <div class="flywheel-arrow">→</div>
+    <div class="flywheel-item">
+      <div class="flywheel-icon">🎯</div>
+      <span>Entries<br>Flow</span>
+    </div>
+    <div class="flywheel-arrow">→</div>
+    <div class="flywheel-item">
+      <div class="flywheel-icon">💰</div>
+      <span>Revenue<br>Compounds</span>
+    </div>
+    <div class="flywheel-arrow">→</div>
+    <div class="flywheel-item">
+      <div class="flywheel-icon">🤝</div>
+      <span>Investors<br>Close</span>
+    </div>
+  </div>
+  <p class="flywheel-cta">The dashboards are the key that starts the engine.  <strong>Everything downstream turns on that first move.</strong></p>
+</div>
+
+<!-- PHASES -->
+<div class="main">
+  <div class="timeline-label">Execution Roadmap</div>
+  <h2 class="timeline-title">Five Phases · 180 Days</h2>
+
+  <!-- PHASE 1 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <div class="phase-accent bg-p1"></div>
+      <div class="phase-header-inner">
+        <div class="phase-number p1">Phase 1</div>
+        <div class="phase-title-block">
+          <div class="phase-name">The Ignition Layer</div>
+          <div class="phase-timing">Now — Day 60</div>
+        </div>
+        <div class="phase-goal-pill pill-p1">Build the Proof</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <p class="phase-description">
+        Nothing else converts without the dashboards.  They are the proof, the sales pitch, and the enrollment driver in one.  Six dashboards (Owner, Rider, Breeder / Individual, Dam, Sire) must be built to mobile-first standard — ESPN is the design reference.  The FOMO component cannot be buried.  It needs to hit the user in the face the moment they land.  The enrolled stallion access rule is the most powerful silent revenue tool on the platform — it must be architecturally locked before any other logic is layered on top.
+      </p>
+      <div class="metrics-row">
+        <div class="metric-chip">
+          <span class="metric-value">6</span>
+          <span class="metric-label">Dashboard Types</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">180</span>
+          <span class="metric-label">Demo Profiles Needed</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">30</span>
+          <span class="metric-label">Per Category</span>
+        </div>
+      </div>
+      <div class="actions-label">Team Actions — Right Now</div>
+      <ul class="action-list">
+        <li><span class="bullet bg-p1">S</span><div><strong>Spencer</strong> finishes image scraping so profiles are visually populated at launch.</div></li>
+        <li><span class="bullet bg-p1">L</span><div><strong>Logan</strong> polishes the GitHub mockups and brings them to the full team.</div></li>
+        <li><span class="bullet bg-p1">S</span><div><strong>Scott Davis</strong> gets the enrolled stallion access rule built into the architecture before any other logic is layered on top.</div></li>
+        <li><span class="bullet bg-p1">★</span><div>Identify the <strong>180 demo profiles</strong> (30 each: horse, dam, sire, rider, owner, breeder) for a live representative dataset.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <div class="phase-accent bg-p2"></div>
+      <div class="phase-header-inner">
+        <div class="phase-number p2">Phase 2</div>
+        <div class="phase-title-block">
+          <div class="phase-name">The Enrollment Push</div>
+          <div class="phase-timing">Days 30–90</div>
+        </div>
+        <div class="phase-goal-pill pill-p2">Convert Top Sires</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <p class="phase-description">
+        Once the dashboards are live, the enrollment pitch practically writes itself.  Walk into a meeting with a stallion owner, pull up their sire dashboard on your phone, and show them the royalties their dam owners and breeders are not receiving because their stallion is not enrolled.  No deck needed.  Just the platform working.  Dam owners will begin pressuring sire owners to enroll because enrollment is the only thing standing between them and their royalty checks.  That pressure is free marketing.
+      </p>
+      <div class="metrics-row">
+        <div class="metric-chip">
+          <span class="metric-value">81</span>
+          <span class="metric-label">Non-Enrolled Target Sires</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$2.0M</span>
+          <span class="metric-label">Deferred Enrollment Fees</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">77,592</span>
+          <span class="metric-label">Idle Offspring (Top 50)</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$312K</span>
+          <span class="metric-label">Potential from Top-25 Campaign</span>
+        </div>
+      </div>
+      <div class="actions-label">Conversion Levers</div>
+      <ul class="action-list">
+        <li><span class="bullet bg-p2">$</span><div><strong>$12,500 cash option</strong> (50% off $25K) as a time-limited incentive to top-25 target sires as soon as dashboards are live.</div></li>
+        <li><span class="bullet bg-p2">🔓</span><div><strong>Discipline unlock fees</strong> at $5,000 down per discipline — one sire unlocking 3 disciplines generates $15,000 in immediate cash.</div></li>
+        <li><span class="bullet bg-p2">★</span><div><strong>1,134 unlocked disciplines</strong> represent $17.0M in theoretical revenue.  Target converting just 10 to start.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <div class="phase-accent bg-p3"></div>
+      <div class="phase-header-inner">
+        <div class="phase-number p3">Phase 3</div>
+        <div class="phase-title-block">
+          <div class="phase-name">Entry Fee Flywheel</div>
+          <div class="phase-timing">Days 60–180</div>
+        </div>
+        <div class="phase-goal-pill pill-p3">Drive Recurring Revenue</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <p class="phase-description">
+        Entry fees are the recurring engine that funds everything else.  The platform captures 20% of each $250 entry — $50 per entry.  An active offspring competing in four categories across 20 events generates $4,000 in annual platform entry fee revenue from a single horse.  The projected purse showcase (what would have been paid out at 100% historical participation) is a major activation tool.  Build that into the leaderboard experience prominently.  The FOMO design does the heavy lifting — you are not just showing competitors what they won, you are showing them what they left on the table.
+      </p>
+      <div class="metrics-row">
+        <div class="metric-chip">
+          <span class="metric-value">$50</span>
+          <span class="metric-label">Platform Capture Per Entry</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$4,000</span>
+          <span class="metric-label">Annual Rev / Active Horse</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$4.8M</span>
+          <span class="metric-label">Entry Fees @ 25% Activation</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$16.9M</span>
+          <span class="metric-label">Purse Value @ 25% Activation</span>
+        </div>
+      </div>
+      <div class="actions-label">Platform Must-Haves</div>
+      <ul class="action-list">
+        <li><span class="bullet bg-p3">📊</span><div>Build the <strong>projected purse showcase</strong> prominently into the leaderboard — what would have paid out at 100% participation.</div></li>
+        <li><span class="bullet bg-p3">😤</span><div>FOMO display on every non-enrolled profile: royalties missed by sire owner, dam owner, and breeder based on historical data.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <div class="phase-accent bg-p4"></div>
+      <div class="phase-header-inner">
+        <div class="phase-number p4">Phase 4</div>
+        <div class="phase-title-block">
+          <div class="phase-name">Sponsorship &amp; Advertising</div>
+          <div class="phase-timing">Days 90–150</div>
+        </div>
+        <div class="phase-goal-pill pill-p4">Layer in Brand Revenue</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <p class="phase-description">
+        You do not need millions of users to start this conversation.  You need a compelling story about the audience.  Once leaderboards are live with active users engaging with horse profiles, you have a monetizable audience.  Start with one anchor sponsor on the leaderboard itself — a single national brand like Wrangler, Purina, or a major trailer manufacturer will see immediate value.  That deal validates the model and creates social proof for every subsequent sponsor conversation.  The vendor marketplace scales with the event network — one or two events integrated with a sponsored banner is enough to prove the model to a brand partner.
+      </p>
+      <div class="metrics-row">
+        <div class="metric-chip">
+          <span class="metric-value">$1K–$10K</span>
+          <span class="metric-label">Per Event Sponsorship Range</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">700</span>
+          <span class="metric-label">Events in Network</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">20%</span>
+          <span class="metric-label">Vendor Marketplace Commission</span>
+        </div>
+      </div>
+      <div class="actions-label">First Move</div>
+      <ul class="action-list">
+        <li><span class="bullet bg-p4">1</span><div>Identify one <strong>anchor sponsor target</strong> (Wrangler, Purina, trailer manufacturer) for leaderboard branding.</div></li>
+        <li><span class="bullet bg-p4">2</span><div>Integrate <strong>1–2 events</strong> with a sponsored results page to prove the model before scaling the full marketplace.</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <div class="phase-accent bg-p5"></div>
+      <div class="phase-header-inner">
+        <div class="phase-number p5">Phase 5</div>
+        <div class="phase-title-block">
+          <div class="phase-name">Investment Closes Easier</div>
+          <div class="phase-timing">Days 120+</div>
+        </div>
+        <div class="phase-goal-pill pill-p5">Close the Seed Round</div>
+      </div>
+    </div>
+    <div class="phase-body">
+      <p class="phase-description">
+        Investors are not buying a pitch deck.  They are buying evidence that the flywheel turns.  Every enrolled stallion, every entry fee processed, and every active leaderboard view is evidence.  The story is not "here is what we will build" — the story is "here is what is already built, here is the traction, here is the revenue already in motion, and here is what your capital does to the velocity."  That is a fundamentally different and more compelling conversation.
+      </p>
+      <div class="metrics-row">
+        <div class="metric-chip">
+          <span class="metric-value">Dual</span>
+          <span class="metric-label">Outcome Demo Strategy</span>
+        </div>
+        <div class="metric-chip">
+          <span class="metric-value">$25K</span>
+          <span class="metric-label">Enrollment OR Angel Check</span>
+        </div>
+      </div>
+      <div class="actions-label">Investor Narrative</div>
+      <ul class="action-list">
+        <li><span class="bullet bg-p5">📈</span><div>Update the investor deck to reflect <strong>real traction data</strong>, not projections alone — enrolled stallions, entry fees processed, leaderboard views.</div></li>
+        <li><span class="bullet bg-p5">🎯</span><div><strong>Bobby Patton / Metallic Cat</strong> demo strategy: every high-value target approached with dual-outcome lens.  You are showing them something that already exists and letting them choose which side of the table they want to sit on.</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- PRIORITY LIST -->
+<div class="priority-section">
+  <div class="priority-inner">
+    <div class="timeline-label">Action Sequence</div>
+    <h2 class="timeline-title">The Sequenced Priority List</h2>
+    <p style="font-family: Arial, sans-serif; font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">This is the order in which the team's energy should flow, right now.</p>
+
+    <div class="priority-grid">
+      <div class="priority-row">
+        <div class="priority-num">1</div>
+        <div class="priority-content">
+          <strong>Build the dashboards to mobile-first standard with FOMO prominent</strong>
+          <span>Enrolled stallion access rule must be architecturally locked — non-negotiable from day one.</span>
+        </div>
+        <div class="priority-badge badge-now">Now</div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">2</div>
+        <div class="priority-content">
+          <strong>Populate the 180 demo profiles + complete Spencer's image scraping</strong>
+          <span>30 each: horse, dam, sire, rider, owner, breeder — a live representative dataset to demo from.</span>
+        </div>
+        <div class="priority-badge badge-now">Now</div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">3</div>
+        <div class="priority-content">
+          <strong>Identify the top 25 unenrolled target sires</strong>
+          <span>Prepare a personalized dashboard demo for each — the pitch is the platform, not a slide deck.</span>
+        </div>
+        <div class="priority-badge badge-soon">Days 30–60</div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">4</div>
+        <div class="priority-content">
+          <strong>Open the enrollment conversion campaign with $12,500 cash incentive</strong>
+          <span>Time-limited offer to top-25 targets.  $312,500 potential from a single focused campaign.</span>
+        </div>
+        <div class="priority-badge badge-soon">Days 30–90</div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">5</div>
+        <div class="priority-content">
+          <strong>Open the first anchor sponsorship conversation</strong>
+          <span>Once leaderboard traffic is demonstrable.  One deal validates the entire model.</span>
+        </div>
+        <div class="priority-badge badge-next">Days 90–120</div>
+      </div>
+      <div class="priority-row">
+        <div class="priority-num">6</div>
+        <div class="priority-content">
+          <strong>Update the investor deck to reflect real traction data</strong>
+          <span>Enrolled sires, entry fees, leaderboard views.  Replace projections with proof wherever possible.</span>
+        </div>
+        <div class="priority-badge badge-next">Days 120+</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Legendary Stakes</span> &nbsp;·&nbsp; Confidential Strategic Plan &nbsp;·&nbsp; April 2026
+</div>
+
+</body>
+</html>
