@@ -4,65 +4,389 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Legendary Stakes — ESPN Style Landing</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet" />
-  <style>* { margin: 0; padding: 0; box-sizing: border-box; }</style>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', 'Segoe UI', sans-serif; background: #fff; color: #1a1a1a; }
+    :root {
+      --gold: #B8960C; --gold-light: #D4AF37; --gold-bg: #FDF8E8;
+      --gold-border: #E8D48A; --dark: #1a1a1a; --mid: #555;
+      --light: #888; --border: #e0e0e0; --hover: #f5f5f5;
+    }
+
+    /* TICKER */
+    .ticker-wrap { background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; overflow: hidden; }
+    .ticker-label { background: var(--gold-bg); padding: 8px 16px; display: flex; align-items: center; gap: 8px; border-right: 1px solid var(--gold-border); flex-shrink: 0; }
+    .ticker-label span { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; }
+    .ticker-track { overflow: hidden; flex: 1; }
+    .ticker-inner { display: flex; transition: transform 0.6s cubic-bezier(.4,0,.2,1); }
+    .ticker-item { min-width: 220px; padding: 6px 16px; border-right: 1px solid var(--border); cursor: pointer; }
+    .ticker-item:hover { background: #fafafa; }
+    .ticker-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .ticker-event { font-size: 10px; color: var(--light); font-weight: 500; }
+    .ticker-status { font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; }
+    .status-live { background: var(--gold); color: #fff; }
+    .status-semi { background: #4CAF50; color: #fff; }
+    .status-other { background: #e8e8e8; color: #666; }
+    .ticker-class { font-size: 11px; color: var(--mid); margin-bottom: 1px; }
+    .ticker-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .ticker-leader { font-size: 11px; color: var(--dark); font-weight: 600; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ticker-score { font-size: 13px; font-weight: 700; color: var(--gold); }
+    .ticker-btn { background: #fafafa; border: none; color: var(--light); padding: 12px 8px; cursor: pointer; border-left: 1px solid var(--border); font-size: 16px; }
+    .ticker-btn:hover { color: var(--gold); }
+
+    /* NAV */
+    nav { background: #fff; border-bottom: 3px solid var(--gold); padding: 0 24px; display: flex; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .logo-wrap { margin-right: 28px; padding: 10px 0; flex-shrink: 0; }
+    .logo-text { display: flex; align-items: baseline; line-height: 1; }
+    .logo-text .main { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 22px; color: var(--dark); letter-spacing: 2px; }
+    .logo-text .gold-d { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 22px; color: var(--gold); letter-spacing: 2px; }
+    .logo-sub { font-size: 9px; letter-spacing: 5px; color: var(--gold); text-align: center; margin-top: -2px; text-transform: uppercase; }
+    .nav-disciplines { display: flex; align-items: center; flex: 1; overflow: hidden; }
+    .nav-btn { background: transparent; border: none; color: var(--mid); font-size: 13px; font-weight: 600; padding: 16px 14px; cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .nav-btn:hover, .nav-btn.active { color: var(--gold); background: var(--gold-bg); border-bottom-color: var(--gold); }
+    .nav-more-wrap { position: relative; }
+    .nav-more-btn { background: transparent; border: none; color: var(--light); font-size: 13px; font-weight: 500; padding: 16px 14px; cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .nav-more-btn:hover { color: var(--gold); }
+    .nav-dropdown { display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px; min-width: 200px; z-index: 200; box-shadow: 0 12px 40px rgba(0,0,0,.12); }
+    .nav-dropdown.open { display: block; }
+    .nav-dropdown button { display: block; width: 100%; text-align: left; background: transparent; border: none; color: #444; font-size: 13px; font-weight: 500; padding: 8px 12px; cursor: pointer; border-radius: 4px; font-family: 'DM Sans', sans-serif; }
+    .nav-dropdown button:hover { background: var(--gold-bg); }
+    .nav-actions { display: flex; align-items: center; gap: 16px; flex-shrink: 0; margin-left: 16px; }
+    .nav-action-btn { background: transparent; border: none; color: var(--mid); font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .nav-action-btn:hover { color: var(--gold); }
+
+    /* BANNER */
+    .banner { background: var(--gold-bg); border-bottom: 1px solid var(--gold-border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .banner-inner { display: flex; align-items: center; gap: 20px; }
+    .banner-ls { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--gold); }
+    .banner-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--dark); letter-spacing: 1px; }
+    .banner-sub { font-size: 12px; color: var(--light); margin-top: 2px; }
+    .btn-gold { background: var(--gold); color: #fff; border: none; padding: 10px 28px; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; cursor: pointer; border-radius: 4px; text-transform: uppercase; font-family: 'DM Sans', sans-serif; transition: background .2s; }
+    .btn-gold:hover { background: var(--gold-light); }
+
+    /* MAIN GRID */
+    .grid { display: grid; grid-template-columns: 280px 1fr 300px; max-width: 1400px; margin: 0 auto; }
+    aside { padding: 20px 16px; }
+    .aside-left { border-right: 1px solid var(--border); }
+    .aside-right { border-left: 1px solid var(--border); }
+
+    /* LEFT SIDEBAR */
+    .signup-box { background: var(--dark); border-radius: 10px; padding: 24px; text-align: center; margin-bottom: 20px; }
+    .signup-box h3 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff; line-height: 1.3; margin-bottom: 4px; }
+    .signup-box h3 span { color: var(--gold-light); }
+    .signup-box p { font-size: 13px; color: #999; margin-bottom: 16px; }
+    .btn-gold-full { background: var(--gold); color: #fff; border: none; padding: 10px 0; font-size: 13px; font-weight: 600; border-radius: 4px; cursor: pointer; width: 100%; font-family: 'DM Sans', sans-serif; margin-bottom: 14px; transition: background .2s; }
+    .btn-gold-full:hover { background: var(--gold-light); }
+    .watch-section { margin-bottom: 20px; }
+    .watch-header { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: var(--dark); }
+    .watch-item { display: flex; align-items: center; gap: 10px; padding: 8px; cursor: pointer; border-radius: 6px; transition: all .2s; font-size: 13px; color: #444; }
+    .watch-item:hover { background: var(--hover); padding-left: 12px; }
+    .quick-links { border-top: 1px solid var(--border); padding-top: 16px; }
+    .quick-links h4 { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 10px; letter-spacing: 0.5px; }
+    .quick-link { display: flex; align-items: center; gap: 8px; padding: 7px 8px; font-size: 13px; color: var(--mid); cursor: pointer; border-radius: 4px; transition: all .2s; }
+    .quick-link:hover { color: var(--gold); padding-left: 12px; }
+    .quick-link .dot { font-size: 10px; color: var(--gold); }
+
+    /* MAIN CONTENT */
+    main { padding: 20px 24px; }
+    .hero { position: relative; border-radius: 10px; overflow: hidden; margin-bottom: 24px; cursor: pointer; border: 1px solid var(--border); transition: border-color .3s; }
+    .hero:hover { border-color: var(--gold-border); }
+    .hero-img { width: 100%; height: 380px; background: linear-gradient(135deg, #FDF8E8 0%, #f5eed4 30%, #e8dbb8 60%, #f0e8d0 100%); display: flex; align-items: center; justify-content: center; position: relative; }
+    .hero-img .horse-svg { opacity: 0.1; font-size: 120px; }
+    .featured-tag { position: absolute; top: 16px; left: 16px; background: var(--gold); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 4px; letter-spacing: 1.5px; }
+    .hero-content { padding: 24px; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--dark); line-height: 1.25; margin-bottom: 10px; }
+    .hero p { font-size: 14px; color: var(--mid); line-height: 1.5; margin-bottom: 10px; }
+    .hero-meta { font-size: 12px; color: var(--light); }
+    .hero-meta span { color: var(--gold); font-weight: 600; }
+    .stories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .story-card { background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); cursor: pointer; transition: border-color .3s; }
+    .story-card:hover { border-color: var(--gold-border); }
+    .story-img { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: 0.15; }
+    .story-img.reining { background: linear-gradient(135deg, #FDF8E8, #f0f8f0); }
+    .story-img.barrel { background: linear-gradient(135deg, #FDF8E8, #f8f0f0); }
+    .story-body { padding: 14px 16px; }
+    .story-tag { font-size: 10px; font-weight: 700; color: var(--gold); letter-spacing: 1.5px; margin-bottom: 6px; }
+    .story-title { font-size: 15px; font-weight: 600; color: var(--dark); line-height: 1.3; margin-bottom: 6px; }
+    .story-desc { font-size: 12px; color: var(--light); line-height: 1.4; margin-bottom: 8px; }
+    .story-meta { font-size: 11px; color: #aaa; }
+    .inline-links { display: flex; gap: 24px; padding: 12px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+    .inline-link { font-size: 12px; color: var(--mid); cursor: pointer; transition: color .2s; }
+    .inline-link:hover { color: var(--gold); }
+    .top-stories { margin-bottom: 24px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .section-bar { width: 4px; height: 20px; background: var(--gold); border-radius: 2px; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--dark); }
+    .story-row { padding: 12px; border-radius: 6px; cursor: pointer; transition: background .2s; border-bottom: 1px solid var(--border); }
+    .story-row:hover { background: var(--hover); }
+    .story-row-title { font-size: 15px; font-weight: 600; color: var(--dark); line-height: 1.35; margin-bottom: 4px; }
+    .story-row-meta { font-size: 11px; color: var(--light); }
+    .bloodstock { background: var(--dark); border-radius: 10px; padding: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .bs-label { font-size: 10px; font-weight: 700; color: var(--gold-light); letter-spacing: 2px; margin-bottom: 6px; }
+    .bs-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .bs-sub { font-size: 13px; color: #999; }
+
+    /* RIGHT SIDEBAR */
+    .headlines-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .headlines-bar { width: 3px; height: 16px; background: var(--gold); border-radius: 2px; }
+    .headlines-title { font-size: 15px; font-weight: 700; color: var(--dark); }
+    .headline-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: #444; cursor: pointer; line-height: 1.4; transition: color .2s; }
+    .headline-item:hover { color: var(--gold); }
+    .rpi-box { background: #fafafa; border-radius: 8px; padding: 16px; margin-top: 20px; border: 1px solid var(--border); }
+    .rpi-label { font-size: 10px; font-weight: 700; color: var(--gold); letter-spacing: 2px; margin-bottom: 12px; }
+    .rpi-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .rpi-row:last-child { border-bottom: none; }
+    .rpi-rank { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .rpi-rank.first { background: var(--gold); color: #fff; }
+    .rpi-rank.other { background: #e8e8e8; color: var(--light); }
+    .rpi-name { font-size: 12px; font-weight: 600; color: var(--dark); }
+    .rpi-pts { font-size: 10px; color: var(--light); }
+    .rpi-change { font-size: 10px; font-weight: 600; margin-left: auto; }
+    .rpi-change.up { color: #4CAF50; }
+    .rpi-change.flat { color: #aaa; }
+    .rpi-change.down { color: #e74c3c; }
+    .promo-box { background: var(--dark); border-radius: 8px; padding: 20px; margin-top: 20px; text-align: center; }
+    .promo-title { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; line-height: 1.3; }
+    .promo-sub { font-size: 11px; color: #999; margin-bottom: 16px; line-height: 1.4; }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-    const DISCIPLINES_MAIN = ["Cutting","Reining","Cow Horse","Barrel Racing","Team Roping","Tie-Down","Breakaway","Steer Wrestling"];
-    const DISCIPLINES_MORE = ["Pole Bending","Western Pleasure","Hunter Under Saddle","Trail","Showmanship","Halter","Western Riding","Ranch Riding"];
-    const LIVE_EVENTS = [{event:"NCHA Summer Spectacular",loc:"Fort Worth, TX",class:"Open",leader:"Metallic Cat x Smart Little Lena",score:"228",status:"Final"},{event:"NRHA Futurity",loc:"OKC, OK",class:"Open L4",leader:"Gunner x Topsail Whiz",score:"224.5",status:"Go 2"},{event:"AQHA World",loc:"OKC, OK",class:"Jr Cutting",leader:"Dual Rey x Peptoboonsmal",score:"221",status:"Live"},{event:"Snaffle Bit Fut.",loc:"Reno, NV",class:"Open RCH",leader:"One Time Pepto x Boon San",score:"219",status:"Final"},{event:"The Run For A Million",loc:"Las Vegas, NV",class:"Barrel Racing",leader:"French Streaktovegas",score:"14.82s",status:"Semi"},{event:"NRBC",loc:"Ogden, UT",class:"Open Reining",leader:"Spooks Gotta Whiz x Custom Crome",score:"226",status:"Go 3"},{event:"World Series Team Roping",loc:"Stephenville, TX",class:"#12 Header",leader:"Coleman / Smith",score:"4.8s",status:"Live"},{event:"PCCHA Stakes",loc:"Paso Robles, CA",class:"Non-Pro",leader:"Hottish x Smooth As A Cat",score:"220.5",status:"Final"}];
-    const TOP_HEADLINES = ["Metallic Cat progeny surpass $100M in lifetime earnings","NCHA announces record $12M added money for Summer Spectacular","Reining sensation Gunnatrashya sells for $1.2M at Heritage Sale","AQHA membership hits all-time high of 285,000 active members","New futurity age rules spark debate among cutting horse trainers","Barrel racing French Streaktovegas named Horse of the Year","Legendary Stakes launches AI-powered cross-matching for breeders","Team roping prize money up 34% year-over-year across all events","Oklahoma new equine tax incentive expected to draw major events","Ranch riding discipline sees 78% growth in amateur entries"];
-    const FEATURED_STORIES = [{title:"How Todd Bergen Built a Dynasty: Inside the $40M Program",time:"2h",author:"Sarah Mitchell"},{title:"The Economics of a $500K Stallion Breeding Season",time:"5h",author:"Legendary Stakes Analytics"},{title:"2026 Futurity Preview: 15 Horses to Watch This Fall",time:"8h",author:"Jake Telford"}];
-    const QUICK_LINKS = ["NCHA Standings","NRHA Standings","AQHA World Qualifiers","Barrel Racing Results","Team Roping Standings","Bloodstock Exchange"];
-    function App() {
-      const [moreOpen,setMoreOpen]=useState(false),[activeDiscipline,setActiveDiscipline]=useState(null),[tickerOffset,setTickerOffset]=useState(0),[heroLoaded,setHeroLoaded]=useState(false);
-      const gold="#B8960C",goldLight="#D4AF37",goldBg="#FDF8E8",goldBorder="#E8D48A",dark="#1a1a1a",midGray="#555",lightGray="#888",borderColor="#e0e0e0";
-      useEffect(()=>{setHeroLoaded(true);},[]);
-      useEffect(()=>{const i=setInterval(()=>{setTickerOffset(p=>{const m=LIVE_EVENTS.length*220-900;return p>=m?0:p+220;});},4000);return()=>clearInterval(i);},[]);
-      return <div style={{fontFamily:"DM Sans,sans-serif",background:"#fff",color:dark,minHeight:"100vh"}}>
-        <div style={{borderBottom:"1px solid "+borderColor,overflow:"hidden"}}><div style={{display:"flex",alignItems:"center"}}>
-          <div style={{background:goldBg,padding:"8px 16px",display:"flex",alignItems:"center",gap:8,borderRight:"1px solid "+goldBorder,flexShrink:0}}><span style={{fontSize:11,fontWeight:700,color:gold,letterSpacing:1,textTransform:"uppercase"}}>Live Events</span></div>
-          <div style={{overflow:"hidden",flex:1}}><div style={{display:"flex",transition:"transform 0.6s",transform:"translateX(-"+tickerOffset+"px)"}}>{LIVE_EVENTS.map((ev,i)=><div key={i} style={{minWidth:220,padding:"6px 16px",borderRight:"1px solid "+borderColor,cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}><span style={{fontSize:10,color:lightGray}}>{ev.event}</span><span style={{fontSize:9,fontWeight:700,padding:"1px 6px",borderRadius:3,background:ev.status==="Live"?gold:ev.status==="Semi"?"#4CAF50":"#e8e8e8",color:ev.status==="Live"||ev.status==="Semi"?"#fff":"#666"}}>{ev.status}</span></div><div style={{fontSize:11,color:midGray}}>{ev.class}</div><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:11,fontWeight:600,maxWidth:140,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{ev.leader}</span><span style={{fontSize:13,fontWeight:700,color:gold}}>{ev.score}</span></div></div>)}</div></div>
-          <button onClick={()=>setTickerOffset(p=>Math.max(0,p-220))} style={{background:"#fafafa",border:"none",color:lightGray,padding:"12px 8px",cursor:"pointer",fontSize:16}}>&lsaquo;</button>
-          <button onClick={()=>setTickerOffset(p=>p+220)} style={{background:"#fafafa",border:"none",color:lightGray,padding:"12px 8px",cursor:"pointer",fontSize:16}}>&rsaquo;</button>
-        </div></div>
-        <nav style={{background:"#fff",borderBottom:"3px solid "+gold,padding:"0 24px",display:"flex",alignItems:"center",position:"sticky",top:0,zIndex:100,boxShadow:"0 1px 4px rgba(0,0,0,.06)"}}>
-          <div style={{marginRight:28,padding:"10px 0",flexShrink:0}}><div style={{display:"flex",alignItems:"baseline",lineHeight:1}}><span style={{fontFamily:"Playfair Display,serif",fontWeight:800,fontSize:22,color:dark,letterSpacing:2}}>LEGEN</span><span style={{fontFamily:"Playfair Display,serif",fontWeight:800,fontSize:22,background:"linear-gradient(135deg,"+gold+","+goldLight+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:2}}>D</span><span style={{fontFamily:"Playfair Display,serif",fontWeight:800,fontSize:22,color:dark,letterSpacing:2}}>ARY</span></div><div style={{fontSize:9,letterSpacing:5,color:gold,textAlign:"center",marginTop:-2,textTransform:"uppercase"}}>stakes</div></div>
-          <div style={{display:"flex",alignItems:"center",flex:1,overflow:"hidden"}}>{DISCIPLINES_MAIN.map(d=><button key={d} onClick={()=>setActiveDiscipline(d)} style={{background:"transparent",border:"none",color:activeDiscipline===d?gold:midGray,fontSize:13,fontWeight:600,padding:"16px 14px",cursor:"pointer",borderBottom:activeDiscipline===d?"2px solid "+gold:"2px solid transparent",whiteSpace:"nowrap"}}>{d}</button>)}<div style={{position:"relative"}}><button onClick={()=>setMoreOpen(!moreOpen)} style={{background:"transparent",border:"none",color:lightGray,fontSize:13,padding:"16px 14px",cursor:"pointer",whiteSpace:"nowrap"}}>More Disciplines</button>{moreOpen&&<div style={{position:"absolute",top:"100%",left:0,background:"#fff",border:"1px solid "+borderColor,borderRadius:8,padding:8,minWidth:200,zIndex:200,boxShadow:"0 12px 40px rgba(0,0,0,.12)"}}>{DISCIPLINES_MORE.map(d=><button key={d} onClick={()=>{setActiveDiscipline(d);setMoreOpen(false);}} style={{display:"block",width:"100%",textAlign:"left",background:"transparent",border:"none",color:"#444",fontSize:13,padding:"8px 12px",cursor:"pointer"}}>{d}</button>)}</div>}</div></div>
-          <div style={{display:"flex",gap:16,marginLeft:16}}><button style={{background:"transparent",border:"none",color:midGray,fontSize:12,cursor:"pointer"}}>Watch</button><button style={{background:"transparent",border:"none",color:midGray,fontSize:12,cursor:"pointer"}}>Fantasy</button><button style={{background:"transparent",border:"none",color:midGray,fontSize:12,cursor:"pointer"}}>Where to Watch</button></div>
-        </nav>
-        <div style={{background:goldBg,borderBottom:"1px solid "+goldBorder,padding:"16px 32px",display:"flex",alignItems:"center",justifyContent:"space-between"}}><div style={{display:"flex",alignItems:"center",gap:20}}><div style={{fontFamily:"Playfair Display,serif",fontSize:18,fontWeight:700,background:"linear-gradient(135deg,"+gold+","+goldLight+")",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>LS</div><div><div style={{fontFamily:"Playfair Display,serif",fontSize:20,fontWeight:700,color:dark}}>LEGENDARY STAKES IS NOW THE HOME OF LIVE SHOWS</div><div style={{fontSize:12,color:lightGray,marginTop:2}}>All Major Western Performance Events. Live Results. All in One Place.</div></div></div><button style={{background:gold,color:"#fff",border:"none",padding:"10px 28px",fontSize:13,fontWeight:700,cursor:"pointer",borderRadius:4}}>SIGN UP NOW</button></div>
-        <div style={{display:"grid",gridTemplateColumns:"280px 1fr 300px",maxWidth:1400,margin:"0 auto"}}>
-          <aside style={{padding:"20px 16px",borderRight:"1px solid "+borderColor}}>
-            <div style={{background:dark,borderRadius:10,padding:24,textAlign:"center",marginBottom:20}}><div style={{fontFamily:"Playfair Display,serif",fontSize:20,fontWeight:700,color:"#fff",marginBottom:4}}>ALL OF <span style={{color:goldLight}}>LEGENDARY STAKES.</span></div><div style={{fontSize:13,color:"#999",marginBottom:16}}>ALL IN ONE PLACE.</div><button style={{background:gold,color:"#fff",border:"none",padding:"10px 32px",fontSize:13,fontWeight:600,borderRadius:4,cursor:"pointer",width:"100%"}}>Sign Up Now</button></div>
-            <div style={{marginBottom:20}}><div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12}}><span style={{color:gold}}>&#128205;</span><span style={{fontSize:14,fontWeight:600,color:dark}}>Watch on Legendary Stakes</span></div><button style={{background:gold,color:"#fff",border:"none",padding:"10px 0",fontSize:13,fontWeight:700,borderRadius:4,cursor:"pointer",width:"100%",marginBottom:14}}>Subscribe Now</button>{[{icon:"&#128052;",label:"NCHA Summer Spectacular - Live"},{icon:"&#127919;",label:"NRHA Futurity - Go Round 2"},{icon:"&#127999;",label:"Snaffle Bit Futurity Replay"},{icon:"&#9201;",label:"Run For A Million - Semis"},{icon:"&#128250;",label:"Legendary Stakes Originals"}].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px",cursor:"pointer",fontSize:13,color:"#444"}} dangerouslySetInnerHTML={{__html:item.icon+" "+item.label}} />)}</div>
-            <div style={{borderTop:"1px solid "+borderColor,paddingTop:16}}><div style={{fontSize:14,fontWeight:700,color:dark,marginBottom:10}}>Quick Links</div>{QUICK_LINKS.map((link,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 8px",fontSize:13,color:midGray,cursor:"pointer"}}><span style={{fontSize:10,color:gold}}>&#9670;</span> {link}</div>)}</div>
-          </aside>
-          <main style={{padding:"20px 24px"}}>
-            <div style={{position:"relative",borderRadius:10,overflow:"hidden",marginBottom:24,cursor:"pointer",transform:heroLoaded?"translateY(0)":"translateY(12px)",opacity:heroLoaded?1:0,transition:"all .8s",border:"1px solid "+borderColor}}>
-              <div style={{width:"100%",height:380,background:"linear-gradient(135deg,"+goldBg+" 0%,#f5eed4 30%,#e8dbb8 60%,#f0e8d0 100%)",position:"relative"}}><div style={{position:"absolute",top:16,left:16,background:gold,color:"#fff",fontSize:10,fontWeight:700,padding:"4px 10px",borderRadius:4}}>FEATURED</div></div>
-              <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"0 24px 24px"}}><h1 style={{fontFamily:"Playfair Display,serif",fontSize:28,fontWeight:700,color:dark,lineHeight:1.25,marginBottom:10,maxWidth:500}}>The $2.4M Mare That Changed Cutting Forever</h1><p style={{fontSize:14,color:midGray,lineHeight:1.5,maxWidth:480,marginBottom:10}}>From a $35,000 yearling purchase to the most decorated mare in NCHA history.</p><div style={{fontSize:12,color:lightGray}}>12h &middot; <span style={{color:gold,fontWeight:600}}>Sarah Mitchell</span></div></div>
-            </div>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:24}}>{[{tag:"REINING",title:"NRHA Futurity Go 2: Three Horses Score 224+ in Historic Night",desc:"The Open finals are shaping up to be one of the most competitive in a decade.",time:"4h",author:"LS Staff"},{tag:"BARREL RACING",title:"2026 Run For A Million Semifinals: Who Punched Their Ticket",desc:"Eight riders advance to the million-dollar final round in Las Vegas.",time:"6h",author:"Tammy West"}].map((story,i)=><div key={i} style={{background:"#fff",borderRadius:8,overflow:"hidden",border:"1px solid "+borderColor,cursor:"pointer"}}><div style={{height:140,background:goldBg,display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:48,opacity:0.2}}>{i===0?"&#127919;":"&#127943;"}</span></div><div style={{padding:"14px 16px"}}><div style={{fontSize:10,fontWeight:700,color:gold,letterSpacing:1.5,marginBottom:6}}>{story.tag}</div><div style={{fontSize:15,fontWeight:600,color:dark,lineHeight:1.3,marginBottom:6}}>{story.title}</div><div style={{fontSize:12,color:lightGray,marginBottom:8}}>{story.desc}</div><div style={{fontSize:11,color:"#aaa"}}>{story.time} &middot; {story.author}</div></div></div>)}</div>
-            <div style={{marginBottom:24}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><div style={{width:4,height:20,background:gold,borderRadius:2}}\/><span style={{fontSize:16,fontWeight:700,color:dark}}>Top Stories</span></div>{FEATURED_STORIES.map((story,i)=><div key={i} style={{padding:"12px",cursor:"pointer",borderBottom:"1px solid "+borderColor}}><div style={{fontSize:15,fontWeight:600,color:dark,marginBottom:4}}>{story.title}</div><div style={{fontSize:11,color:lightGray}}>{story.time} &middot; {story.author}</div></div>)}</div>
-            <div style={{background:dark,borderRadius:10,padding:24,display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:10,fontWeight:700,color:goldLight,letterSpacing:2,marginBottom:6}}>BLOODSTOCK EXCHANGE</div><div style={{fontFamily:"Playfair Display,serif",fontSize:20,fontWeight:700,color:"#fff",marginBottom:4}}>Heritage Select Sale - Live Now</div><div style={{fontSize:13,color:"#999"}}>142 lots &middot; $18.4M in total sales &middot; 94% sell rate</div></div><button style={{background:gold,color:"#fff",border:"none",padding:"10px 24px",fontSize:12,fontWeight:700,borderRadius:4,cursor:"pointer"}}>VIEW SALE</button></div>
-          </main>
-          <aside style={{padding:"20px 16px",borderLeft:"1px solid "+borderColor}}>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}><div style={{width:3,height:16,background:gold,borderRadius:2}}\/><span style={{fontSize:15,fontWeight:700,color:dark}}>Top Headlines</span></div>
-            {TOP_HEADLINES.map((h,i)=><div key={i} style={{padding:"10px 0",borderBottom:"1px solid "+borderColor,fontSize:13,color:"#444",cursor:"pointer",lineHeight:1.4}}>{h}</div>)}
-            <div style={{background:"#fafafa",borderRadius:8,padding:16,marginTop:20,border:"1px solid "+borderColor}}><div style={{fontSize:10,fontWeight:700,color:gold,letterSpacing:2,marginBottom:12}}>RPI POWER RANKINGS</div>{[{rank:1,name:"Metallic Cat",pts:"2,847",change:"+2"},{rank:2,name:"Smooth As A Cat",pts:"2,691",change:"--"},{rank:3,name:"High Brow Cat",pts:"2,584",change:"-1"},{rank:4,name:"One Time Pepto",pts:"2,410",change:"+3"},{rank:5,name:"Dual Rey",pts:"2,388",change:"-1"}].map((item,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",borderBottom:i<4?"1px solid "+borderColor:"none"}}><span style={{width:22,height:22,borderRadius:"50%",background:i===0?gold:"#e8e8e8",color:i===0?"#fff":lightGray,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,flexShrink:0}}>{item.rank}</span><div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:dark}}>{item.name}</div><div style={{fontSize:10,color:lightGray}}>{item.pts} pts</div></div><span style={{fontSize:10,fontWeight:600,color:item.change.startsWith("+")?"#4CAF50":"#e74c3c"}}>{item.change}</span></div>)}</div>
-            <div style={{background:dark,borderRadius:8,padding:20,marginTop:20,textAlign:"center"}}><div style={{fontFamily:"Playfair Display,serif",fontSize:16,fontWeight:700,color:"#fff",marginBottom:4}}>THE HOME OF WESTERN PERFORMANCE</div><div style={{fontSize:11,color:"#999",marginBottom:16}}>All Shows. All Disciplines. All in One Place.</div><button style={{background:gold,color:"#fff",border:"none",padding:"10px 24px",fontSize:12,fontWeight:700,borderRadius:4,cursor:"pointer",width:"100%"}}>SIGN UP NOW</button></div>
-          </aside>
+
+  <!-- LIVE TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-label"><span>Live Events</span></div>
+    <div class="ticker-track">
+      <div class="ticker-inner" id="ticker">
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">NCHA Summer Spectacular</span><span class="ticker-status status-other">Final</span></div><div class="ticker-class">Open</div><div class="ticker-bottom"><span class="ticker-leader">Metallic Cat x Smart Little Lena</span><span class="ticker-score">228</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">NRHA Futurity</span><span class="ticker-status status-other">Go 2</span></div><div class="ticker-class">Open L4</div><div class="ticker-bottom"><span class="ticker-leader">Gunner x Topsail Whiz</span><span class="ticker-score">224.5</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">AQHA World</span><span class="ticker-status status-live">Live</span></div><div class="ticker-class">Jr Cutting</div><div class="ticker-bottom"><span class="ticker-leader">Dual Rey x Peptoboonsmal</span><span class="ticker-score">221</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">Snaffle Bit Fut.</span><span class="ticker-status status-other">Final</span></div><div class="ticker-class">Open RCH</div><div class="ticker-bottom"><span class="ticker-leader">One Time Pepto x Boon San</span><span class="ticker-score">219</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">Run For A Million</span><span class="ticker-status status-semi">Semi</span></div><div class="ticker-class">Barrel Racing</div><div class="ticker-bottom"><span class="ticker-leader">French Streaktovegas</span><span class="ticker-score">14.82s</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">NRBC</span><span class="ticker-status status-other">Go 3</span></div><div class="ticker-class">Open Reining</div><div class="ticker-bottom"><span class="ticker-leader">Spooks Gotta Whiz x Custom Crome</span><span class="ticker-score">226</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">World Series Team Roping</span><span class="ticker-status status-live">Live</span></div><div class="ticker-class">#12 Header</div><div class="ticker-bottom"><span class="ticker-leader">Coleman / Smith</span><span class="ticker-score">4.8s</span></div></div>
+        <div class="ticker-item"><div class="ticker-top"><span class="ticker-event">PCCHA Stakes</span><span class="ticker-status status-other">Final</span></div><div class="ticker-class">Non-Pro</div><div class="ticker-bottom"><span class="ticker-leader">Hottish x Smooth As A Cat</span><span class="ticker-score">220.5</span></div></div>
+      </div>
+    </div>
+    <button class="ticker-btn" onclick="tickerPrev()">&#8249;</button>
+    <button class="ticker-btn" onclick="tickerNext()">&#8250;</button>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo-wrap">
+      <div class="logo-text">
+        <span class="main">LEGEN</span><span class="gold-d">D</span><span class="main">ARY</span>
+      </div>
+      <div class="logo-sub">stakes</div>
+    </div>
+    <div class="nav-disciplines">
+      <button class="nav-btn" onclick="setDiscipline(this)">Cutting</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Reining</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Cow Horse</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Barrel Racing</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Team Roping</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Tie-Down</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Breakaway</button>
+      <button class="nav-btn" onclick="setDiscipline(this)">Steer Wrestling</button>
+      <div class="nav-more-wrap">
+        <button class="nav-more-btn" onclick="toggleMore()">More Disciplines &#9662;</button>
+        <div class="nav-dropdown" id="moreDropdown">
+          <button onclick="setDiscipline(this)">Pole Bending</button>
+          <button onclick="setDiscipline(this)">Western Pleasure</button>
+          <button onclick="setDiscipline(this)">Hunter Under Saddle</button>
+          <button onclick="setDiscipline(this)">Trail</button>
+          <button onclick="setDiscipline(this)">Showmanship</button>
+          <button onclick="setDiscipline(this)">Halter</button>
+          <button onclick="setDiscipline(this)">Western Riding</button>
+          <button onclick="setDiscipline(this)">Ranch Riding</button>
         </div>
-      </div>;
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-action-btn">&#9654; Watch</button>
+      <button class="nav-action-btn">&#127942; Fantasy</button>
+      <button class="nav-action-btn">&#128205; Where to Watch</button>
+    </div>
+  </nav>
+
+  <!-- BANNER -->
+  <div class="banner">
+    <div class="banner-inner">
+      <div class="banner-ls">LS</div>
+      <div>
+        <div class="banner-title">LEGENDARY STAKES IS NOW THE HOME OF LIVE SHOWS</div>
+        <div class="banner-sub">All Major Western Performance Events. Live Results. All in One Place.*</div>
+      </div>
+    </div>
+    <button class="btn-gold">SIGN UP NOW</button>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="aside-left">
+      <div class="signup-box">
+        <h3>ALL OF <span>LEGENDARY STAKES.</span></h3>
+        <p>ALL IN ONE PLACE.</p>
+        <button class="btn-gold-full">Sign Up Now</button>
+      </div>
+      <div class="watch-section">
+        <div class="watch-header">&#128205; Watch on Legendary Stakes</div>
+        <button class="btn-gold-full">Subscribe Now</button>
+        <div class="watch-item">&#128052; NCHA Summer Spectacular &mdash; Live</div>
+        <div class="watch-item">&#127919; NRHA Futurity &mdash; Go Round 2</div>
+        <div class="watch-item">&#127999; Snaffle Bit Futurity Replay</div>
+        <div class="watch-item">&#9201; Run For A Million &mdash; Semis</div>
+        <div class="watch-item">&#128250; Legendary Stakes Originals</div>
+      </div>
+      <div class="quick-links">
+        <h4>Quick Links</h4>
+        <div class="quick-link"><span class="dot">&#9670;</span> NCHA Standings</div>
+        <div class="quick-link"><span class="dot">&#9670;</span> NRHA Standings</div>
+        <div class="quick-link"><span class="dot">&#9670;</span> AQHA World Qualifiers</div>
+        <div class="quick-link"><span class="dot">&#9670;</span> Barrel Racing Results</div>
+        <div class="quick-link"><span class="dot">&#9670;</span> Team Roping Standings</div>
+        <div class="quick-link"><span class="dot">&#9670;</span> Bloodstock Exchange</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero-img">
+          <span class="horse-svg">&#128052;</span>
+          <div class="featured-tag">FEATURED</div>
+        </div>
+        <div class="hero-content">
+          <h1>The $2.4M Mare That Changed Cutting Forever &mdash; And the Breeding Empire She Built</h1>
+          <p>From a $35,000 yearling purchase to the most decorated mare in NCHA history. How one owner's gamble reshaped the cutting horse landscape.</p>
+          <div class="hero-meta">12h &middot; <span>Sarah Mitchell</span> and <span>Jake Telford</span></div>
+        </div>
+      </div>
+
+      <!-- Story Grid -->
+      <div class="stories-grid">
+        <div class="story-card">
+          <div class="story-img reining">&#127919;</div>
+          <div class="story-body">
+            <div class="story-tag">REINING</div>
+            <div class="story-title">NRHA Futurity Go 2: Three Horses Score 224+ in Historic Night</div>
+            <div class="story-desc">The Open finals are shaping up to be one of the most competitive in a decade.</div>
+            <div class="story-meta">4h &middot; LS Staff</div>
+          </div>
+        </div>
+        <div class="story-card">
+          <div class="story-img barrel">&#127943;</div>
+          <div class="story-body">
+            <div class="story-tag">BARREL RACING</div>
+            <div class="story-title">2026 Run For A Million Semifinals: Who Punched Their Ticket</div>
+            <div class="story-desc">Eight riders advance to the million-dollar final round in Las Vegas.</div>
+            <div class="story-meta">6h &middot; Tammy West</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inline Links -->
+      <div class="inline-links">
+        <span class="inline-link">&#128176; Bloodstock Exchange trending lots</span>
+        <span class="inline-link">&#128202; Updated RPI Rankings</span>
+        <span class="inline-link">&#127942; Stakes Standings</span>
+      </div>
+
+      <!-- Top Stories -->
+      <div class="top-stories">
+        <div class="section-header">
+          <div class="section-bar"></div>
+          <span class="section-title">Top Stories</span>
+        </div>
+        <div class="story-row"><div class="story-row-title">How Todd Bergen Built a Dynasty: Inside the $40M Program</div><div class="story-row-meta">2h &middot; Sarah Mitchell</div></div>
+        <div class="story-row"><div class="story-row-title">The Economics of a $500K Stallion Breeding Season</div><div class="story-row-meta">5h &middot; Legendary Stakes Analytics</div></div>
+        <div class="story-row"><div class="story-row-title">2026 Futurity Preview: 15 Horses to Watch This Fall</div><div class="story-row-meta">8h &middot; Jake Telford</div></div>
+      </div>
+
+      <!-- Bloodstock Exchange -->
+      <div class="bloodstock">
+        <div>
+          <div class="bs-label">BLOODSTOCK EXCHANGE</div>
+          <div class="bs-title">Heritage Select Sale &mdash; Live Now</div>
+          <div class="bs-sub">142 lots &middot; $18.4M in total sales &middot; 94% sell rate</div>
+        </div>
+        <button class="btn-gold">VIEW SALE</button>
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="aside-right">
+      <div class="headlines-header">
+        <div class="headlines-bar"></div>
+        <span class="headlines-title">Top Headlines</span>
+      </div>
+      <div class="headline-item">Metallic Cat progeny surpass $100M in lifetime earnings</div>
+      <div class="headline-item">NCHA announces record $12M added money for Summer Spectacular</div>
+      <div class="headline-item">Reining sensation 'Gunnatrashya' sells for $1.2M at Heritage Sale</div>
+      <div class="headline-item">AQHA membership hits all-time high of 285,000 active members</div>
+      <div class="headline-item">New futurity age rules spark debate among cutting horse trainers</div>
+      <div class="headline-item">Barrel racing's French Streaktovegas named Horse of the Year</div>
+      <div class="headline-item">Legendary Stakes launches AI-powered cross-matching for breeders</div>
+      <div class="headline-item">Team roping prize money up 34% year-over-year across all events</div>
+      <div class="headline-item">Oklahoma's new equine tax incentive expected to draw major events</div>
+      <div class="headline-item">Ranch riding discipline sees 78% growth in amateur entries</div>
+
+      <!-- RPI Rankings -->
+      <div class="rpi-box">
+        <div class="rpi-label">RPI POWER RANKINGS</div>
+        <div class="rpi-row"><span class="rpi-rank first">1</span><div><div class="rpi-name">Metallic Cat</div><div class="rpi-pts">2,847 pts</div></div><span class="rpi-change up">+2</span></div>
+        <div class="rpi-row"><span class="rpi-rank other">2</span><div><div class="rpi-name">Smooth As A Cat</div><div class="rpi-pts">2,691 pts</div></div><span class="rpi-change flat">&mdash;</span></div>
+        <div class="rpi-row"><span class="rpi-rank other">3</span><div><div class="rpi-name">High Brow Cat</div><div class="rpi-pts">2,584 pts</div></div><span class="rpi-change down">-1</span></div>
+        <div class="rpi-row"><span class="rpi-rank other">4</span><div><div class="rpi-name">One Time Pepto</div><div class="rpi-pts">2,410 pts</div></div><span class="rpi-change up">+3</span></div>
+        <div class="rpi-row"><span class="rpi-rank other">5</span><div><div class="rpi-name">Dual Rey</div><div class="rpi-pts">2,388 pts</div></div><span class="rpi-change down">-1</span></div>
+      </div>
+
+      <!-- Promo -->
+      <div class="promo-box">
+        <div class="promo-title">THE HOME OF WESTERN PERFORMANCE</div>
+        <div class="promo-sub">All Shows. All Disciplines. All in One Place.*</div>
+        <button class="btn-gold" style="width:100%">SIGN UP NOW</button>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Ticker
+    let tickerPos = 0;
+    const tickerEl = document.getElementById('ticker');
+    const itemWidth = 220;
+    const maxItems = 8;
+    function tickerNext() {
+      const max = (maxItems * itemWidth) - 900;
+      tickerPos = tickerPos >= max ? 0 : tickerPos + itemWidth;
+      tickerEl.style.transform = 'translateX(-' + tickerPos + 'px)';
     }
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    function tickerPrev() {
+      tickerPos = Math.max(0, tickerPos - itemWidth);
+      tickerEl.style.transform = 'translateX(-' + tickerPos + 'px)';
+    }
+    setInterval(tickerNext, 4000);
+
+    // Disciplines
+    function setDiscipline(btn) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('moreDropdown').classList.remove('open');
+    }
+
+    // More dropdown
+    function toggleMore() {
+      document.getElementById('moreDropdown').classList.toggle('open');
+    }
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-more-wrap')) {
+        document.getElementById('moreDropdown').classList.remove('open');
+      }
+    });
   </script>
 </body>
 </html>
